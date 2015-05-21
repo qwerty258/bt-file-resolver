@@ -26,11 +26,11 @@ typedef struct _LIST_ITEM
     CString BTComment;
 }LIST_ITEM, *LPLIST_ITEM;
 
-typedef struct tagForRename
+typedef struct tag
 {
     CString BTFileName;
     CString BTInnerName;
-};//zyf
+}tagForRename;
 
 class CBTFileResolverView: public CListView
 {
@@ -42,7 +42,7 @@ private:
 
     /* 最好不要使用set，虽然排序速度快，但由于使用virtual list显示文件，读取数据时不好处理 */
     std::vector<LIST_ITEM> m_vecListItems;
-    std::vector<tagForRename> m_vecRenam;//zyf
+    std::vector<tagForRename> m_vecRenam;
 
     CImageList m_ListViewIL;
 

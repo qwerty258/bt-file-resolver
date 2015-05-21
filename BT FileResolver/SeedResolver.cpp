@@ -3,7 +3,7 @@
 #ifdef _DEBUG
 /* 这个是visual leak detector的头文件，用于内存泄漏检测，如果没装就注释掉，
  * 文件多的话建议不要加，速度非常慢*/
-//#include <vld.h>
+#include <vld.h>
 #endif
 #include "SeedResolver.h"
 
