@@ -1,15 +1,13 @@
 // BT FileResolverView.cpp : CBTFileResolverView 类的实现
 #include "stdafx.h"
-
 #include "BT FileResolver.h"
-
 #include "BT FileResolverDoc.h"
 #include "BT FileResolverView.h"
 #include "global.h"
 #include "WorkThread.h"
-#include <afxpriv.h>	//消息 - WM_IDLEUPDATECMDUI
+#include <afxpriv.h> //消息 - WM_IDLEUPDATECMDUI
 
-#pragma warning( disable: 4996 )
+#pragma warning(disable:4996)
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -17,22 +15,21 @@
 
 #define FREE_THREAD_HANDLE(h) { if(h) CloseHandle(h); h = NULL; }
 #define UPDATE_TOOLBAR_UI { (CToolBar*) AfxGetMainWnd()->GetDescendantWindow(AFX_IDW_TOOLBAR)->SendMessage(WM_IDLEUPDATECMDUI, (WPARAM) TRUE, NULL); }
-#define SET_PROGRESS_BAR_MARQUEE_STYLE(h, b) { b ? ::SetWindowLong(h, GWL_STYLE, ::GetWindowLong(h, GWL_STYLE) | PBS_MARQUEE) : \
-	::SetWindowLong(h, GWL_STYLE, ::GetWindowLong(h, GWL_STYLE) & ~PBS_MARQUEE); }
+#define SET_PROGRESS_BAR_MARQUEE_STYLE(h, b) { b ? ::SetWindowLong(h, GWL_STYLE, ::GetWindowLong(h, GWL_STYLE) | PBS_MARQUEE) : ::SetWindowLong(h, GWL_STYLE, ::GetWindowLong(h, GWL_STYLE) & ~PBS_MARQUEE); }
 
 //更新界面的时间间隔，多少毫秒更新一次界面
-#define UPDATE_UI_INTERVAL			200
-#define UPDATE_PROGRESS_INTERVAL	50
+#define UPDATE_UI_INTERVAL       200
+#define UPDATE_PROGRESS_INTERVAL 50
 
 //种子文件的扩展名
-#define BT_FILE_EXT_LOWER _T(".torrent")
+#define BT_FILE_EXT_LOWER   _T(".torrent")
 
 //过滤类别，可以多添加些类别，注意要大写，结尾的；不能少
-#define FILTER_TYPE_ALL		_T("")
-#define FILTER_TYPE_VIDEO	_T("AVI;ASF;WMV;AVS;FLV;MKV;MOV;3GP;MP4;MPG;MPEG;DAT;OGM;VOB;RM;RMVB;TS;TP;IFO;NSV;M2TS;")
-#define FILTER_TYPE_MUSIC	_T("MP3;AAC;WAV;WMA;CDA;FLAC;M4A;MID;MKA;MP2;MPA;MPC;APE;OFR;OGG;RA;WV;TTA;AC3;DTS;")
-#define FILTER_TYPE_PICTURE	_T("BMP;GIF;JPEG;JPG;PNG;TIF;")
-#define FILTER_TYPE_SOFT	_T("7Z;RAR;ZIP;ISO;ISZ;")
+#define FILTER_TYPE_ALL     _T("")
+#define FILTER_TYPE_VIDEO   _T("AVI;ASF;WMV;AVS;FLV;MKV;MOV;3GP;MP4;MPG;MPEG;DAT;OGM;VOB;RM;RMVB;TS;TP;IFO;NSV;M2TS;")
+#define FILTER_TYPE_MUSIC   _T("MP3;AAC;WAV;WMA;CDA;FLAC;M4A;MID;MKA;MP2;MPA;MPC;APE;OFR;OGG;RA;WV;TTA;AC3;DTS;")
+#define FILTER_TYPE_PICTURE _T("BMP;GIF;JPEG;JPG;PNG;TIF;")
+#define FILTER_TYPE_SOFT    _T("7Z;RAR;ZIP;ISO;ISZ;")
 
 //处理进程的状态
 typedef enum PROCESS_STATE
@@ -63,8 +60,7 @@ void ExploreFile(const CString& FileName)
 {
     if(FileName.IsEmpty()) return;
 
-    ShellExecute(::GetDesktopWindow(), _T("open"), _T("explorer.exe"),
-                 _T("/select,") + FileName, NULL, SW_SHOWNORMAL);
+    ShellExecute(::GetDesktopWindow(), _T("open"), _T("explorer.exe"), _T("/select,") + FileName, NULL, SW_SHOWNORMAL);
 }
 
 //取得指定文件名的类别名称，并返回对应的图标索引
@@ -73,11 +69,14 @@ int GetFileInfo(CString FileName, CString& TypeName)
     SHFILEINFO shFileInfo;
     ZeroMemory(&shFileInfo, sizeof(SHFILEINFO));
 
-    if(SHGetFileInfo(FileName, FILE_ATTRIBUTE_NORMAL, &shFileInfo, sizeof(SHFILEINFO),
-        SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES))
+    if(SHGetFileInfo(FileName, FILE_ATTRIBUTE_NORMAL, &shFileInfo, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES))
+    {
         TypeName.Format(_T("%s"), shFileInfo.szTypeName);
+    }
     else
+    {
         TypeName = _T("文件");
+    }
 
     return shFileInfo.iIcon;
 }
@@ -135,9 +134,13 @@ BOOL IsLesser(const LIST_ITEM& item1, const LIST_ITEM& item2)
     }
 
     if(dwl1 != _I64_MAX)//比较文件大小
+    {
         return SortParam.bSortAsc ? dwl1 < dwl2 : dwl2 < dwl1;
+    }
     else//比较字符串
+    {
         return SortParam.bSortAsc ? s1 < s2 : s2 < s1;
+    }
 
 }
 
@@ -200,8 +203,7 @@ BOOL CBTFileResolverView::PreCreateWindow(CREATESTRUCT& cs)
     // TODO: 在此处通过修改
     //  CREATESTRUCT cs 来修改窗口类或样式
 
-    cs.style = cs.style & ~LVS_TYPEMASK | LVS_REPORT |
-        LVS_SHOWSELALWAYS | LVS_OWNERDATA;
+    cs.style = cs.style & ~LVS_TYPEMASK | LVS_REPORT | LVS_SHOWSELALWAYS | LVS_OWNERDATA;
 
     return CListView::PreCreateWindow(cs);
 }
@@ -237,8 +239,7 @@ void CBTFileResolverView::OnInitialUpdate()
      *	m_ListViewIL的图标列表是由系统维护的，不要替换或添加或删除它包含的图标，得到对应的图标索引的方法见GetFileInfo函数。
      */
     SHFILEINFO shFileInfo;
-    m_ListViewIL.Attach((HIMAGELIST)SHGetFileInfo(_T(""), FILE_ATTRIBUTE_NORMAL,
-        &shFileInfo, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES));
+    m_ListViewIL.Attach((HIMAGELIST)SHGetFileInfo(_T(""), FILE_ATTRIBUTE_NORMAL, &shFileInfo, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES));
     GetListCtrl().SetImageList(&m_ListViewIL, LVSIL_SMALL);
 
     //创建进度条
@@ -333,11 +334,16 @@ void CBTFileResolverView::OnFileOpenpath()
             m_CurrentPath = szPath;
 
             if(m_CurrentPath.ReverseFind(_T('\\')) != m_CurrentPath.GetLength() - 1)
+            {
                 m_CurrentPath += _T("\\");
+            }
 
             SetStatusText(ID_INDICATOR_CURRENT_FILE_PATH, _T("当前目录：") + m_CurrentPath);
 
-            if(m_wndDialogBar->IsDlgButtonChecked(IDC_CHECK_AUTO_START)) OnActionProcess();
+            if(m_wndDialogBar->IsDlgButtonChecked(IDC_CHECK_AUTO_START))
+            {
+                OnActionProcess();
+            }
         }
     }
 }
@@ -376,8 +382,7 @@ void CBTFileResolverView::OnActionProcess()
     Filter_Keyword.Trim();Filter_Keyword.MakeUpper();
 
 
-    Filter_Operator = ((CComboBox*)m_wndDialogBar-> \
-                       GetDlgItem(IDC_COMBO_SIZE_TYPE))->GetCurSel();
+    Filter_Operator = ((CComboBox*)m_wndDialogBar->GetDlgItem(IDC_COMBO_SIZE_TYPE))->GetCurSel();
 
     CString FileSize;
     m_wndDialogBar->GetDlgItemText(IDC_FILE_SIZE, FileSize);
@@ -876,9 +881,9 @@ void CBTFileResolverView::OnBnClickedButton1()
                        _T("搜索不同种类的种子内文件，如果不能满足要求，自行指定扩展名。"),
                        _T("指定要搜索的种子内文件扩展名，指定后将忽略“类别”参数，多个扩展名以空格分隔，不要输入点，例如：txt exe dat。"),
                        _T("种子内文件名必须包含指定的关键字，多个关键字以空格分隔，例如：中国 北京。\
-                          			\n            如果勾选了“同时在BT文件名中查找”，则如果种子内文件名不包含关键字，而在在BT文件名中包含也算是符合条件。"),
-                                    _T("指定种子内文件的大小条件，大于或小于某数值，KB为单位。"),
-                                    _T("选择要搜索的目录后立即开始搜索进程。"));
+                                                                                                                                                                                                                                          			\n            如果勾选了“同时在BT文件名中查找”，则如果种子内文件名不包含关键字，而在在BT文件名中包含也算是符合条件。"),
+                                                                                                                                                                                                                                                    _T("指定种子内文件的大小条件，大于或小于某数值，KB为单位。"),
+                                                                                                                                                                                                                                                    _T("选择要搜索的目录后立即开始搜索进程。"));
 
     AfxMessageBox(Desciptions, MB_ICONINFORMATION | MB_OK);
 }

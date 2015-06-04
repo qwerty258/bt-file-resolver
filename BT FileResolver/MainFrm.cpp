@@ -49,24 +49,19 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     if(CFrameWnd::OnCreate(lpCreateStruct) == -1)
         return -1;
 
-    if(!m_wndToolBar.CreateEx(this, NULL, WS_CHILD | WS_VISIBLE | CBRS_TOP
-        | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
-        !m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
+    if(!m_wndToolBar.CreateEx(this, NULL, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) || !m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
     {
         TRACE0("未能创建工具栏\n");
         return -1;      // 未能创建
     }
 
-    if(!m_wndStatusBar.Create(this) ||
-       !m_wndStatusBar.SetIndicators(indicators,
-       sizeof(indicators) / sizeof(UINT)))
+    if(!m_wndStatusBar.Create(this) || !m_wndStatusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT)))
     {
         TRACE0("未能创建状态栏\n");
         return -1;      // 未能创建
     }
 
-    if(!m_wndInfoPanel.Create(this, IDD_INFO_PANEL,
-        CBRS_TOOLTIPS | CBRS_LEFT, AFX_IDW_DIALOGBAR))
+    if(!m_wndInfoPanel.Create(this, IDD_INFO_PANEL, CBRS_TOOLTIPS | CBRS_LEFT, AFX_IDW_DIALOGBAR))
     {
         TRACE0("未能创建信息面板\n");
         return -1;

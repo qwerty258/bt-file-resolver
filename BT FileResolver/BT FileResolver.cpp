@@ -69,11 +69,7 @@ BOOL CBTFileResolverApp::InitInstance()
     // 注册应用程序的文档模板。文档模板
     // 将用作文档、框架窗口和视图之间的连接
     CSingleDocTemplate* pDocTemplate;
-    pDocTemplate = new CSingleDocTemplate(
-        IDR_MAINFRAME,
-        RUNTIME_CLASS(CBTFileResolverDoc),
-        RUNTIME_CLASS(CMainFrame),       // 主 SDI 框架窗口
-        RUNTIME_CLASS(CBTFileResolverView));
+    pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CBTFileResolverDoc), RUNTIME_CLASS(CMainFrame),/*主 SDI 框架窗口*/RUNTIME_CLASS(CBTFileResolverView));
     if(!pDocTemplate)
         return FALSE;
     AddDocTemplate(pDocTemplate);

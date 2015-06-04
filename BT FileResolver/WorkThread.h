@@ -82,9 +82,7 @@ DWORD WINAPI ResolveFun(LPVOID lpParam /* 主调的窗口类句柄 */)
     //original
     int nFileCount = (int)vecBTFiles.size();
 
-    for(vector<CString>::const_iterator iter = vecBTFiles.begin();
-        iter != vecBTFiles.end();
-        ++iter)
+    for(vector<CString>::const_iterator iter = vecBTFiles.begin(); iter != vecBTFiles.end(); ++iter)
     {
         CSeedResolver resolver(*iter);
 

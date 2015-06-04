@@ -1,10 +1,4 @@
 #include "StdAfx.h"
-
-#ifdef _DEBUG
-/* 这个是visual leak detector的头文件，用于内存泄漏检测，如果没装就注释掉，
- * 文件多的话建议不要加，速度非常慢*/
-#include <vld.h>
-#endif
 #include "SeedResolver.h"
 
 //当解析函数抛出异常时是否中断，便于调试
@@ -43,21 +37,21 @@ BOOL CSeedResolver::Resolve()
     char* pBuffer = NULL;
     char* pShadowBuffer = NULL;
 
-    HANDLE hFile = CreateFile(SeedInfo.Seed_FileName,
-                              GENERIC_READ,
-                              FILE_SHARE_READ,
-                              NULL,
-                              OPEN_EXISTING,
-                              FILE_ATTRIBUTE_NORMAL,
-                              NULL);
+    HANDLE hFile = CreateFile(SeedInfo.Seed_FileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-    if(hFile == INVALID_HANDLE_VALUE) return FALSE;
+    if(hFile == INVALID_HANDLE_VALUE)
+    {
+        return FALSE;
+    }
 
     CFile file(hFile);
     m_SeedFileSize = (UINT)file.GetLength();
     m_Position = 0;
 
-    if(!m_SeedFileSize) return FALSE;
+    if(!m_SeedFileSize)
+    {
+        return FALSE;
+    }
 
     pBuffer = new char[m_SeedFileSize];
     file.Read((void*)pBuffer, m_SeedFileSize);
@@ -141,12 +135,7 @@ BOOL CSeedResolver::Resolve()
         CTimeSpan ts(pNode->Data.bcInt);
 
         time += ts;
-        SeedInfo.Seed_CreationDate.Format(_T("%d年%.2d月%.2d日 %.2d时%.2d分"),
-                                          time.GetYear(),
-                                          time.GetMonth(),
-                                          time.GetDay(),
-                                          time.GetHour(),
-                                          time.GetMinute());
+        SeedInfo.Seed_CreationDate.Format(_T("%d年%.2d月%.2d日 %.2d时%.2d分"), time.GetYear(), time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute());
     }
     else
     {
@@ -223,9 +212,8 @@ BOOL CSeedResolver::Resolve()
         iFile.PathName = _T("\\");
 
         //文件大小
-        if(!GetNode(pInfoDict, KEYWORD_LENGTH, &pNode) ||
-           pNode->Type != BC_INT)
-           return FALSE;
+        if(!GetNode(pInfoDict, KEYWORD_LENGTH, &pNode) || pNode->Type != BC_INT)
+            return FALSE;
         else
             iFile.FileSize = pNode->Data.bcInt;
 
@@ -310,7 +298,16 @@ LPNode CSeedResolver::ResovleBuffer(char** pBuffer)
 
     switch(**pBuffer)
     {
-        case '0':case '1':case '2':	case '3':case '4':case '5':	case '6':case '7':case '8':case '9':
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
             pNode = (LPNode)malloc(sizeof(Node));
 
             pNode->Type = BC_STRING;
@@ -431,9 +428,7 @@ LPNode CSeedResolver::ResovleBuffer(char** pBuffer)
 }
 void CSeedResolver::DeallocAll()
 {
-    for(vector<INT_PTR>::iterator iter = vecAllocated.begin();
-        iter != vecAllocated.end();
-        ++iter)
+    for(vector<INT_PTR>::iterator iter = vecAllocated.begin(); iter != vecAllocated.end(); ++iter)
     {
         free((void*)*iter);
     }
