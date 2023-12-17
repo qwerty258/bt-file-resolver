@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 
 #include "SeedResolver.h"
 
@@ -19,7 +19,7 @@ CSeedResolver::CSeedResolver(const CString& SeedFileName)
 
 CSeedResolver::~CSeedResolver(void)
 {
-	//ÇåÀí
+	//æ¸…ç†
 	DeallocAll();
 }
 
@@ -40,7 +40,7 @@ BOOL CSeedResolver::Resolve()
 	pBuffer =new char[m_SeedFileSize];
 	file.Read((void*) pBuffer, m_SeedFileSize);
 
-	//ResovleBufferº¯Êı½«ÒÆ¶¯Ö¸Õë£¬ËùÒÔ´«µİÒ»¸öpBufferµÄ¸±±¾£¬ÕâÑù±ãÓÚÊÍ·ÅpBuffer
+	//ResovleBufferå‡½æ•°å°†ç§»åŠ¨æŒ‡é’ˆï¼Œæ‰€ä»¥ä¼ é€’ä¸€ä¸ªpBufferçš„å‰¯æœ¬ï¼Œè¿™æ ·ä¾¿äºé‡Šæ”¾pBuffer
 	pShadowBuffer = pBuffer;
 
 	BC_Node Root;
@@ -50,28 +50,28 @@ BOOL CSeedResolver::Resolve()
 	}
 	catch (int)
 	{
-		SAFE_RETURN(pBuffer, FALSE);//ÖÖ×ÓÎÄ¼şÎŞ·¨½âÎö
+		SAFE_RETURN(pBuffer, FALSE);//ç§å­æ–‡ä»¶æ— æ³•è§£æ
 	}
 
 	SAFE_CLEAN(pBuffer);
 
-	//ÖÖ×ÓÎÄ¼şµÄ¸ùÒ»¶¨ÊÇ¸öBC_DICTÀàĞÍ
+	//ç§å­æ–‡ä»¶çš„æ ¹ä¸€å®šæ˜¯ä¸ªBC_DICTç±»å‹
 	if(Root.Type != BC_DICT) return FALSE;
 
-	BC_Dict RootDict, InfoDict;//¸ù×ÖµäºÍinfo×Öµä
+	BC_Dict RootDict, InfoDict;//æ ¹å­—å…¸å’Œinfoå­—å…¸
 	BC_Node node;
 
 	RootDict = Root.Data.bcDict;
-	//Èç¹ûÖÖ×Ó²»°üº¬KEYWORD_INFO¹Ø¼ü×Ö»òÕß²»ÊÇ¸ö×ÖµäÔòÈÏÎª¸ÃÖÖ×ÓÎŞĞ§
+	//å¦‚æœç§å­ä¸åŒ…å«KEYWORD_INFOå…³é”®å­—æˆ–è€…ä¸æ˜¯ä¸ªå­—å…¸åˆ™è®¤ä¸ºè¯¥ç§å­æ— æ•ˆ
 	if(GetNode(RootDict, KEYWORD_INFO, node) &&
 		node.Type == BC_DICT)
 		InfoDict = node.Data.bcDict;
 	else
 		return FALSE;
 
-	/* ¿ªÊ¼È¡Öµ */
+	/* å¼€å§‹å–å€¼ */
 
-	//Ê×ÏÈÏÈÈ¡µÃÖÖ×ÓµÄ±àÂë¸ñÊ½
+	//é¦–å…ˆå…ˆå–å¾—ç§å­çš„ç¼–ç æ ¼å¼
 	if(GetNode(RootDict, KEYWORD_ENCODING, node) &&
 		node.Type == BC_STRING)
 	{
@@ -79,24 +79,24 @@ BOOL CSeedResolver::Resolve()
 			SeedInfo.Seed_Encoding = CP_UTF8;
 		else if(strcmp(node.Data.bcString, "utf-7") == 0)//utf-7
 			SeedInfo.Seed_Encoding = CP_UTF7;
-		else if(strcmp(node.Data.bcString, "gbk") == 0)//¼òÌåÖĞÎÄ
+		else if(strcmp(node.Data.bcString, "gbk") == 0)//ç®€ä½“ä¸­æ–‡
 			SeedInfo.Seed_Encoding = 936;
-		else if(strcmp(node.Data.bcString, "big5") == 0)//·±ÌåÖĞÎÄ
+		else if(strcmp(node.Data.bcString, "big5") == 0)//ç¹ä½“ä¸­æ–‡
 			SeedInfo.Seed_Encoding = 950;
-		else if(strcmp(node.Data.bcString, "shift_jis") == 0)//ÈÕÎÄ
+		else if(strcmp(node.Data.bcString, "shift_jis") == 0)//æ—¥æ–‡
 			SeedInfo.Seed_Encoding = 932;
-		else if(strcmp(node.Data.bcString, "windows-874") == 0)//Ì©ÎÄ
+		else if(strcmp(node.Data.bcString, "windows-874") == 0)//æ³°æ–‡
 			SeedInfo.Seed_Encoding = 874;
-		else if(strcmp(node.Data.bcString, "ks_c_5601-1987") == 0)//º«ÎÄ
+		else if(strcmp(node.Data.bcString, "ks_c_5601-1987") == 0)//éŸ©æ–‡
 			SeedInfo.Seed_Encoding = 949;
-		else//ÆäËû¶¼Îªutf-8
+		else//å…¶ä»–éƒ½ä¸ºutf-8
 			SeedInfo.Seed_Encoding = CP_UTF8;
 	}
 	else
-		SeedInfo.Seed_Encoding = CP_UTF8;//Ä¬ÈÏÎªutf-8
+		SeedInfo.Seed_Encoding = CP_UTF8;//é»˜è®¤ä¸ºutf-8
 
 
-	//ÖÖ×ÓµÄ´´½¨ÈÕÆÚ
+	//ç§å­çš„åˆ›å»ºæ—¥æœŸ
 	if(GetNode(RootDict, KEYWORD_CREATION_DATE, node) &&
 		node.Type == BC_INT)
 	{
@@ -104,29 +104,29 @@ BOOL CSeedResolver::Resolve()
 		CTimeSpan ts(node.Data.bcInt);
 
 		time += ts;
-		SeedInfo.Seed_CreationDate.Format(_T("%dÄê%.2dÔÂ%.2dÈÕ %.2dÊ±%.2d·Ö"), time.GetYear(),
+		SeedInfo.Seed_CreationDate.Format(_T("%då¹´%.2dæœˆ%.2dæ—¥ %.2dæ—¶%.2dåˆ†"), time.GetYear(),
 			time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute());
 	}
 	else
-		SeedInfo.Seed_CreationDate = _T("(Î´ÖªÈÕÆÚ)");
+		SeedInfo.Seed_CreationDate = _T("(æœªçŸ¥æ—¥æœŸ)");
 
-	//ÖÖ×ÓµÄ±¸×¢
-	if(GetNode(RootDict, KEYWORD_COMMENT_UTF8, node) &&//Ê×ÏÈ¿´ÓĞÃ»ÓĞutf-8±àÂëµÄ
+	//ç§å­çš„å¤‡æ³¨
+	if(GetNode(RootDict, KEYWORD_COMMENT_UTF8, node) &&//é¦–å…ˆçœ‹æœ‰æ²¡æœ‰utf-8ç¼–ç çš„
 		node.Type == BC_STRING)
 	{
 		ConvertToUnicode(node.Data.bcString, SeedInfo.Seed_Comment, CP_UTF8);
 	}
-	else if(GetNode(RootDict, KEYWORD_COMMENT, node) &&//Èç¹ûÃ»ÓĞutf-8±àÂëµÄ¾ÍÊ¹ÓÃÄÚÖÃ±àÂëµÄ
+	else if(GetNode(RootDict, KEYWORD_COMMENT, node) &&//å¦‚æœæ²¡æœ‰utf-8ç¼–ç çš„å°±ä½¿ç”¨å†…ç½®ç¼–ç çš„
 		node.Type == BC_STRING)
 	{
 		ConvertToUnicode(node.Data.bcString, SeedInfo.Seed_Comment);
 	}
 	else
 	{
-		SeedInfo.Seed_Comment = _T("(Ã»ÓĞ±¸×¢)");
+		SeedInfo.Seed_Comment = _T("(æ²¡æœ‰å¤‡æ³¨)");
 	}
 
-	//ÖÖ×ÓµÄ´´½¨¹¤¾ß
+	//ç§å­çš„åˆ›å»ºå·¥å…·
 	if(GetNode(RootDict, KEYWORD_CREATED_BY, node) &&
 		node.Type == BC_STRING)
 	{
@@ -134,35 +134,35 @@ BOOL CSeedResolver::Resolve()
 	}
 	else
 	{
-		SeedInfo.Seed_Creator = _T("(Î´Öª)");
+		SeedInfo.Seed_Creator = _T("(æœªçŸ¥)");
 	}
 
-	//ÖÖ×ÓµÄ·¢²¼Õß
-	if(GetNode(InfoDict, KEYWORD_PUBLISHER_UTF8, node) &&//Ê×ÏÈ¿´ÓĞÃ»ÓĞutf-8±àÂëµÄ
+	//ç§å­çš„å‘å¸ƒè€…
+	if(GetNode(InfoDict, KEYWORD_PUBLISHER_UTF8, node) &&//é¦–å…ˆçœ‹æœ‰æ²¡æœ‰utf-8ç¼–ç çš„
 		node.Type == BC_STRING)
 	{
 		ConvertToUnicode(node.Data.bcString, SeedInfo.Seed_Publisher, CP_UTF8);
 	}
-	else if(GetNode(InfoDict, KEYWORD_PUBLISHER, node) &&//Èç¹ûÃ»ÓĞutf-8±àÂëµÄ¾ÍÊ¹ÓÃÄÚÖÃ±àÂëµÄ
+	else if(GetNode(InfoDict, KEYWORD_PUBLISHER, node) &&//å¦‚æœæ²¡æœ‰utf-8ç¼–ç çš„å°±ä½¿ç”¨å†…ç½®ç¼–ç çš„
 		node.Type == BC_STRING)
 	{
 		ConvertToUnicode(node.Data.bcString, SeedInfo.Seed_Publisher);
 	}
 	else
 	{
-		SeedInfo.Seed_Publisher = _T("(Î´Öª)");
+		SeedInfo.Seed_Publisher = _T("(æœªçŸ¥)");
 	}
 
-	//ÖÖ×ÓÄÚµÄËùÓĞÎÄ¼ş
+	//ç§å­å†…çš„æ‰€æœ‰æ–‡ä»¶
 	if(GetNode(InfoDict, KEYWORD_FILES, node) &&
 		node.Type == BC_LIST)
 	{
-		//ÕâÊÇ¶àÎÄ¼şÄ£Ê½
+		//è¿™æ˜¯å¤šæ–‡ä»¶æ¨¡å¼
 		GetMultiModeFileList(node.Data.bcList, SeedInfo.Seed_Files);
 	}
 	else
 	{
-		//µ¥ÎÄ¼şÄ£Ê½
+		//å•æ–‡ä»¶æ¨¡å¼
 
 	}
 
@@ -180,7 +180,7 @@ char* CSeedResolver::GetBCString( char** pBuffer )
 	char* pszStrLen;
 	UINT nLen = 0;
 
-	//bencode×Ö·û´®±ØĞëÒÔ1-9µÄÊı×Ö¿ªÊ¼
+	//bencodeå­—ç¬¦ä¸²å¿…é¡»ä»¥1-9çš„æ•°å­—å¼€å§‹
 	if(**pBuffer < '1' || **pBuffer >'9')
 		return pszRet;
 
@@ -188,34 +188,34 @@ char* CSeedResolver::GetBCString( char** pBuffer )
 	{
 		++nLen;
 		
-		//¼ì²éÊÇ·ñÔ½½ç
+		//æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
 		if(!IsRangeValid(nLen))	return pszRet;
 	}
 
-	//nLenÎªbcstringÇ°µ¼µÄ±íÊ¾bcstring³¤¶ÈµÄ×Ö·û¸öÊı
+	//nLenä¸ºbcstringå‰å¯¼çš„è¡¨ç¤ºbcstringé•¿åº¦çš„å­—ç¬¦ä¸ªæ•°
 	pszStrLen = new char[nLen + 1];
 	ZeroMemory(pszStrLen, nLen + 1);
 	memcpy((void*) pszStrLen, (void*) *pBuffer, nLen);
 
-	//¼ì²éÊÇ·ñÔ½½ç
+	//æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
 	if(!IsRangeValid(nLen + 1)) return pszRet;
 
-	//ÒÆ¶¯Ö¸Õë
-	*pBuffer += nLen + 1/* 1Îª':' */;
+	//ç§»åŠ¨æŒ‡é’ˆ
+	*pBuffer += nLen + 1/* 1ä¸º':' */;
 	m_Position += nLen + 1;
 
-	//nLenÕâÊ±ÎªbcstringµÄ³¤¶È
+	//nLenè¿™æ—¶ä¸ºbcstringçš„é•¿åº¦
 	nLen = atoi(pszStrLen);
 	SAFE_CLEAN(pszStrLen);
 
-	//¼ì²éÊÇ·ñÔ½½ç
+	//æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
 	if(!IsRangeValid(nLen)) return pszRet;
 
 	pszRet = new char[nLen + 1];
 	ZeroMemory(pszRet, nLen + 1);
 	memcpy((void*) pszRet, (void*) *pBuffer, nLen);
 
-	//ÒÆ¶¯Ö¸Õë
+	//ç§»åŠ¨æŒ‡é’ˆ
 	*pBuffer += nLen;
 	m_Position += nLen;
 
@@ -230,11 +230,11 @@ DWORDLONG CSeedResolver::GetBCInt( char** pBuffer )
 	char* psz;
 	UINT nLen = 0;
 
-	//bencodeÕûÊı±ØĞëÒÔi¿ªÊ¼
+	//bencodeæ•´æ•°å¿…é¡»ä»¥iå¼€å§‹
 	if(**pBuffer != BC_PREFIX_INT)
 		return dwlRet;
 
-	//¼ì²éÊÇ·ñÔ½½ç
+	//æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
 	if(!IsRangeValid(1)) return dwlRet;
 
 	++(*pBuffer);
@@ -244,24 +244,24 @@ DWORDLONG CSeedResolver::GetBCInt( char** pBuffer )
 	{
 		++nLen;
 
-		//¼ì²éÊÇ·ñÔ½½ç
+		//æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
 		if(!IsRangeValid(nLen)) return dwlRet;
 	}
 
 	psz = new char[nLen + 1];
 	ZeroMemory(psz, nLen + 1);
 	memcpy((void*) psz, (void*) *pBuffer, nLen);
-	if(*psz == '0' && nLen == 1)//0ÊÇbencodeÓĞĞ§µÄÊı×Ö
+	if(*psz == '0' && nLen == 1)//0æ˜¯bencodeæœ‰æ•ˆçš„æ•°å­—
 		dwlRet = 0;
 	else
 		dwlRet = _atoi64(psz) ? _atoi64(psz) : _I64_MAX;
 	SAFE_CLEAN(psz);
 
-	//¼ì²éÊÇ·ñÔ½½ç
+	//æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
 	if(!IsRangeValid(nLen + 1)) return _I64_MAX;
 
-	//ÒÆ¶¯Ö¸Õë
-	*pBuffer += nLen + 1/* 1Îª'e' */;
+	//ç§»åŠ¨æŒ‡é’ˆ
+	*pBuffer += nLen + 1/* 1ä¸º'e' */;
 	m_Position += nLen + 1;
 
 	return dwlRet;
@@ -286,14 +286,14 @@ BC_Node CSeedResolver::ResovleBuffer( char** pBuffer )
 	case BC_PREFIX_LIST:
 		Node.Type = BC_LIST;
 
-		//Ìø¹ıBC_PREFIX_LIST
+		//è·³è¿‡BC_PREFIX_LIST
 		++(*pBuffer);
 		++m_Position;
 
 		while(**pBuffer != BC_SUFFIX)
 			Node.Data.bcList.push_back(ResovleBuffer(pBuffer));
 
-		//½áÎ²µÄBC_SUFFIX
+		//ç»“å°¾çš„BC_SUFFIX
 		++(*pBuffer);
 		++m_Position;
 
@@ -301,7 +301,7 @@ BC_Node CSeedResolver::ResovleBuffer( char** pBuffer )
 	case BC_PREFIX_DICT:
 		Node.Type = BC_DICT;
 
-		//Ìø¹ıBC_PREFIX_DICT
+		//è·³è¿‡BC_PREFIX_DICT
 		++(*pBuffer);
 		++m_Position;
 
@@ -312,7 +312,7 @@ BC_Node CSeedResolver::ResovleBuffer( char** pBuffer )
 			Node.Data.bcDict[key] = ResovleBuffer(pBuffer);
 		}
 
-		//½áÎ²µÄBC_SUFFIX
+		//ç»“å°¾çš„BC_SUFFIX
 		++(*pBuffer);
 		++m_Position;
 
@@ -351,7 +351,7 @@ BOOL CSeedResolver::GetMultiModeFileList( BC_List FileList, vector<InnerFile>& v
 		iter != FileList.end();
 		++iter)
 	{
-		if(iter->Type != BC_DICT) return FALSE;//filesÁĞ±íÄÚÓ¦¶¼ÊÇ×ÖµäÀàĞÍ
+		if(iter->Type != BC_DICT) return FALSE;//filesåˆ—è¡¨å†…åº”éƒ½æ˜¯å­—å…¸ç±»å‹
 
 		InnerFile iFile;
 		BC_Node node;
@@ -367,13 +367,13 @@ BOOL CSeedResolver::GetMultiModeFileList( BC_List FileList, vector<InnerFile>& v
 		if(node.Type != BC_LIST || node.Data.bcList.empty()) return FALSE;
 		BC_List PathList = node.Data.bcList;
 
-		/* ÎÄ¼şÃû£¬¼´pathÁĞ±íµÄ×îºóÒ»¸öÏîÄ¿£¬Èç¹ûÊÇBitCometµÄÄÚÇ¶ÎÄ¼şÔòÌø¹ı */
+		/* æ–‡ä»¶åï¼Œå³pathåˆ—è¡¨çš„æœ€åä¸€ä¸ªé¡¹ç›®ï¼Œå¦‚æœæ˜¯BitCometçš„å†…åµŒæ–‡ä»¶åˆ™è·³è¿‡ */
 		if(PathList.back().Type != BC_STRING) return FALSE;
 		ConvertToUnicode(PathList.back().Data.bcString, iFile.FileName, nCodePage);
-		PathList.pop_back();//³öÕ»
+		PathList.pop_back();//å‡ºæ ˆ
 		if(iFile.FileName.Find(_T(BITCOMET_PADDING_FILE_PREFIX)) == 0) continue;
 
-		/* Ä¿Â¼Ãû */
+		/* ç›®å½•å */
 		for(BC_List::iterator iter1 = PathList.begin();
 			iter1 != PathList.end();
 			++iter1)
@@ -386,7 +386,7 @@ BOOL CSeedResolver::GetMultiModeFileList( BC_List FileList, vector<InnerFile>& v
 			iFile.PathName += s + _T("\\");
 		}
 
-		//ÎÄ¼ş´óĞ¡
+		//æ–‡ä»¶å¤§å°
 		if(GetNode(iter->Data.bcDict, KEYWORD_LENGTH, node) &&
 			node.Type == BC_INT)
 		{
@@ -410,8 +410,8 @@ void CSeedResolver::ConvertToUnicode( const char* pStr , CString& s, int nCodePa
 	
 	if(!pStr) return;
 
-	/* ÕâÖÖ·½·¨²¢²»ºÃ£¬Ó¦¸Ã×Ô¶¯¼ì²â±àÂë£¬ÎÒ¶Ô×Ö·ûµÄ±àÂë½âÂë²»Êì£¬Ö»ÄÜÕâÑù*/
-	if(!nCodePage)//Ã»ÓĞÖ¸¶¨´úÂëÒ³£¬Ê¹ÓÃÖÖ×ÓÄÚ¶¨ÒåµÄ´úÂëÒ³
+	/* è¿™ç§æ–¹æ³•å¹¶ä¸å¥½ï¼Œåº”è¯¥è‡ªåŠ¨æ£€æµ‹ç¼–ç ï¼Œæˆ‘å¯¹å­—ç¬¦çš„ç¼–ç è§£ç ä¸ç†Ÿï¼Œåªèƒ½è¿™æ ·*/
+	if(!nCodePage)//æ²¡æœ‰æŒ‡å®šä»£ç é¡µï¼Œä½¿ç”¨ç§å­å†…å®šä¹‰çš„ä»£ç é¡µ
 		nCP = SeedInfo.Seed_Encoding;
 	else
 		nCP = nCodePage;

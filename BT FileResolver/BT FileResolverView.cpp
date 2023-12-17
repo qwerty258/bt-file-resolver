@@ -1,11 +1,11 @@
-// BT FileResolverView.cpp : CBTFileResolverView ÀàµÄÊµÏÖ
+ï»¿// BT FileResolverView.cpp : CBTFileResolverView ç±»çš„å®ç°
 #include "stdafx.h"
 #include "BT FileResolver.h"
 #include "BT FileResolverDoc.h"
 #include "BT FileResolverView.h"
 #include "global.h"
 #include "WorkThread.h"
-#include <afxpriv.h> //ÏûÏ¢ - WM_IDLEUPDATECMDUI
+#include <afxpriv.h> //æ¶ˆæ¯ - WM_IDLEUPDATECMDUI
 
 #pragma warning(disable:4996)
 
@@ -17,27 +17,27 @@
 #define UPDATE_TOOLBAR_UI { (CToolBar*) AfxGetMainWnd()->GetDescendantWindow(AFX_IDW_TOOLBAR)->SendMessage(WM_IDLEUPDATECMDUI, (WPARAM) TRUE, NULL); }
 #define SET_PROGRESS_BAR_MARQUEE_STYLE(h, b) { b ? ::SetWindowLong(h, GWL_STYLE, ::GetWindowLong(h, GWL_STYLE) | PBS_MARQUEE) : ::SetWindowLong(h, GWL_STYLE, ::GetWindowLong(h, GWL_STYLE) & ~PBS_MARQUEE); }
 
-//¸üĞÂ½çÃæµÄÊ±¼ä¼ä¸ô£¬¶àÉÙºÁÃë¸üĞÂÒ»´Î½çÃæ
+//æ›´æ–°ç•Œé¢çš„æ—¶é—´é—´éš”ï¼Œå¤šå°‘æ¯«ç§’æ›´æ–°ä¸€æ¬¡ç•Œé¢
 #define UPDATE_UI_INTERVAL       200
 #define UPDATE_PROGRESS_INTERVAL 50
 
-//ÖÖ×ÓÎÄ¼şµÄÀ©Õ¹Ãû
+//ç§å­æ–‡ä»¶çš„æ‰©å±•å
 #define BT_FILE_EXT_LOWER   _T(".torrent")
 
-//¹ıÂËÀà±ğ£¬¿ÉÒÔ¶àÌí¼ÓĞ©Àà±ğ£¬×¢ÒâÒª´óĞ´£¬½áÎ²µÄ£»²»ÄÜÉÙ
+//è¿‡æ»¤ç±»åˆ«ï¼Œå¯ä»¥å¤šæ·»åŠ äº›ç±»åˆ«ï¼Œæ³¨æ„è¦å¤§å†™ï¼Œç»“å°¾çš„ï¼›ä¸èƒ½å°‘
 #define FILTER_TYPE_ALL     _T("")
 #define FILTER_TYPE_VIDEO   _T("AVI;ASF;WMV;AVS;FLV;MKV;MOV;3GP;MP4;MPG;MPEG;DAT;OGM;VOB;RM;RMVB;TS;TP;IFO;NSV;M2TS;")
 #define FILTER_TYPE_MUSIC   _T("MP3;AAC;WAV;WMA;CDA;FLAC;M4A;MID;MKA;MP2;MPA;MPC;APE;OFR;OGG;RA;WV;TTA;AC3;DTS;")
 #define FILTER_TYPE_PICTURE _T("BMP;GIF;JPEG;JPG;PNG;TIF;")
 #define FILTER_TYPE_SOFT    _T("7Z;RAR;ZIP;ISO;ISZ;")
 
-//´¦Àí½ø³ÌµÄ×´Ì¬
+//å¤„ç†è¿›ç¨‹çš„çŠ¶æ€
 typedef enum PROCESS_STATE
 {
-    PROCESS_STATE_IDLE/* ¿ÕÏĞ */, PROCESS_STATE_GENERATING/* ËÑË÷ÎÄ¼ş */, PROCESS_STATE_RUNNING/* ÔËĞĞ */
+    PROCESS_STATE_IDLE/* ç©ºé—² */, PROCESS_STATE_GENERATING/* æœç´¢æ–‡ä»¶ */, PROCESS_STATE_RUNNING/* è¿è¡Œ */
 };
 
-//¿çÎÄ¼şÈ«¾Ö±äÁ¿¶¨Òå£¬ÉùÃ÷ÔÚglobal.h
+//è·¨æ–‡ä»¶å…¨å±€å˜é‡å®šä¹‰ï¼Œå£°æ˜åœ¨global.h
 vector<CString> vecBTFiles;
 vector<CString> vecErrorFiles;
 DWORD dwLastUpdateUI = 0;
@@ -50,12 +50,12 @@ int Filter_Operator;
 CString Filter_FileExt;
 DWORDLONG Filter_FileSize;
 
-//È«¾Ö±äÁ¿ÉùÃ÷
+//å…¨å±€å˜é‡å£°æ˜
 CString FindStr;
-SORT_PARAM SortParam;//ÅÅĞò²ÎÊı
-LIST_ITEM CurrentSelItem;//Õâ¸öÊÇ¸øÏêÏ¸ĞÅÏ¢¶Ô»°¿òµÄ»Øµ÷Ê¹ÓÃµÄ£¬´«µİµ±Ç°Ñ¡ÔñµÄÁĞ±íÏîÄ¿
+SORT_PARAM SortParam;//æ’åºå‚æ•°
+LIST_ITEM CurrentSelItem;//è¿™ä¸ªæ˜¯ç»™è¯¦ç»†ä¿¡æ¯å¯¹è¯æ¡†çš„å›è°ƒä½¿ç”¨çš„ï¼Œä¼ é€’å½“å‰é€‰æ‹©çš„åˆ—è¡¨é¡¹ç›®
 
-//ä¯ÀÀÄ¿Â¼²¢Ñ¡ÔñÖ¸¶¨ÎÄ¼ş
+//æµè§ˆç›®å½•å¹¶é€‰æ‹©æŒ‡å®šæ–‡ä»¶
 void ExploreFile(const CString& FileName)
 {
     if(FileName.IsEmpty()) return;
@@ -63,7 +63,7 @@ void ExploreFile(const CString& FileName)
     ShellExecute(::GetDesktopWindow(), _T("open"), _T("explorer.exe"), _T("/select,") + FileName, NULL, SW_SHOWNORMAL);
 }
 
-//È¡µÃÖ¸¶¨ÎÄ¼şÃûµÄÀà±ğÃû³Æ£¬²¢·µ»Ø¶ÔÓ¦µÄÍ¼±êË÷Òı
+//å–å¾—æŒ‡å®šæ–‡ä»¶åçš„ç±»åˆ«åç§°ï¼Œå¹¶è¿”å›å¯¹åº”çš„å›¾æ ‡ç´¢å¼•
 int GetFileInfo(CString FileName, CString& TypeName)
 {
     SHFILEINFO shFileInfo;
@@ -75,15 +75,15 @@ int GetFileInfo(CString FileName, CString& TypeName)
     }
     else
     {
-        TypeName = _T("ÎÄ¼ş");
+        TypeName = _T("æ–‡ä»¶");
     }
 
     return shFileInfo.iIcon;
 }
 
-/* ·Âº¯Êı
- * ÅÅĞò£¬ÕâÀïÒ²¿ÉÒÔÍ¨¹ıÖØÔØLIST_ITEMµÄ<ÔËËã·ûÊµÏÖ£¬²»¹ı²»ÖªµÀÔõÃ´¸ù¾İ
- * ºº×ÖµÄÆ´Òô½øĞĞÅÅĞò£¬ÅÅĞòºº×ÖÓĞµãÂÒ£¬ºÃÏñÊÇ¸ù¾İ±Ê»­ÅÅĞòµÄ */
+/* ä»¿å‡½æ•°
+ * æ’åºï¼Œè¿™é‡Œä¹Ÿå¯ä»¥é€šè¿‡é‡è½½LIST_ITEMçš„<è¿ç®—ç¬¦å®ç°ï¼Œä¸è¿‡ä¸çŸ¥é“æ€ä¹ˆæ ¹æ®
+ * æ±‰å­—çš„æ‹¼éŸ³è¿›è¡Œæ’åºï¼Œæ’åºæ±‰å­—æœ‰ç‚¹ä¹±ï¼Œå¥½åƒæ˜¯æ ¹æ®ç¬”ç”»æ’åºçš„ */
 BOOL IsLesser(const LIST_ITEM& item1, const LIST_ITEM& item2)
 {
     CString s1, s2;
@@ -92,52 +92,52 @@ BOOL IsLesser(const LIST_ITEM& item1, const LIST_ITEM& item2)
 
     switch(SortParam.nColIndex)
     {
-        case 0://ÎÄ¼şÃû
+        case 0://æ–‡ä»¶å
             s1 = item1.FileName;
             s2 = item2.FileName;
             break;
-        case 1://ÎÄ¼ş´óĞ¡
+        case 1://æ–‡ä»¶å¤§å°
             dwl1 = item1.FileSize;
             dwl2 = item2.FileSize;
             break;
-        case 2://ÁĞ±ğÃû³Æ
+        case 2://åˆ—åˆ«åç§°
             s1 = item1.FileTypeName;
             s2 = item2.FileTypeName;
             break;
-        case 3://Â·¾¶
+        case 3://è·¯å¾„
             s1 = item1.InnerPath;
             s2 = item2.InnerPath;
             break;
 
             /*
-            case 4://ÖÖ×Ó·¢²¼Õß
+            case 4://ç§å­å‘å¸ƒè€…
             s1 = item1.BTPublisher;
             s2 = item2.BTPublisher;
             break;
-            case 5://ÖÖ×ÓÎÄ¼şÃû
+            case 5://ç§å­æ–‡ä»¶å
             s1 = item1.BTFileName;
             s2 = item2.BTFileName;
             break;
-            case 6://ÖÖ×Ó´´½¨¹¤¾ß
+            case 6://ç§å­åˆ›å»ºå·¥å…·
             s1 = item1.BTCreator;
             s2 = item2.BTCreator;
             break;
-            case 7://ÖÖ×Ó´´½¨ÈÕÆÚ
+            case 7://ç§å­åˆ›å»ºæ—¥æœŸ
             s1 = item1.BTCreationDate;
             s2 = item2.BTCreationDate;
             break;
-            case 8://±¸×¢
+            case 8://å¤‡æ³¨
             s1 = item1.BTComment;
             s2 = item2.BTComment;
             break;
             */
     }
 
-    if(dwl1 != _I64_MAX)//±È½ÏÎÄ¼ş´óĞ¡
+    if(dwl1 != _I64_MAX)//æ¯”è¾ƒæ–‡ä»¶å¤§å°
     {
         return SortParam.bSortAsc ? dwl1 < dwl2 : dwl2 < dwl1;
     }
-    else//±È½Ï×Ö·û´®
+    else//æ¯”è¾ƒå­—ç¬¦ä¸²
     {
         return SortParam.bSortAsc ? s1 < s2 : s2 < s1;
     }
@@ -149,7 +149,7 @@ BOOL IsLesser(const LIST_ITEM& item1, const LIST_ITEM& item2)
 IMPLEMENT_DYNCREATE(CBTFileResolverView, CListView)
 
 BEGIN_MESSAGE_MAP(CBTFileResolverView, CListView)
-    /* ×Ô¶¨ÒåÏûÏ¢´¦Àí */
+    /* è‡ªå®šä¹‰æ¶ˆæ¯å¤„ç† */
     ON_MESSAGE(WM_THREAD_PROCESS_DONE, &CBTFileResolverView::OnWorkDone)
     ON_MESSAGE(WM_THREAD_PROCESS_RUNNING, &CBTFileResolverView::OnProcess)
 
@@ -184,24 +184,24 @@ BEGIN_MESSAGE_MAP(CBTFileResolverView, CListView)
     ON_COMMAND(ID_FILE_RENAMEZYF, &CBTFileResolverView::OnFileRenamezyf)
 END_MESSAGE_MAP()
 
-// CBTFileResolverView ¹¹Ôì/Îö¹¹
+// CBTFileResolverView æ„é€ /ææ„
 
 CBTFileResolverView::CBTFileResolverView()
 {
-    // TODO: ÔÚ´Ë´¦Ìí¼Ó¹¹Ôì´úÂë
+    // TODO: åœ¨æ­¤å¤„æ·»åŠ æ„é€ ä»£ç 
     m_ProcessState = PROCESS_STATE_IDLE;
 }
 
 CBTFileResolverView::~CBTFileResolverView()
 {
-    //£¡£¡Ò»¶¨Òª·ÖÀë
+    //ï¼ï¼ä¸€å®šè¦åˆ†ç¦»
     m_ListViewIL.Detach();
 }
 
 BOOL CBTFileResolverView::PreCreateWindow(CREATESTRUCT& cs)
 {
-    // TODO: ÔÚ´Ë´¦Í¨¹ıĞŞ¸Ä
-    //  CREATESTRUCT cs À´ĞŞ¸Ä´°¿ÚÀà»òÑùÊ½
+    // TODO: åœ¨æ­¤å¤„é€šè¿‡ä¿®æ”¹
+    //  CREATESTRUCT cs æ¥ä¿®æ”¹çª—å£ç±»æˆ–æ ·å¼
 
     cs.style = cs.style & ~LVS_TYPEMASK | LVS_REPORT | LVS_SHOWSELALWAYS | LVS_OWNERDATA;
 
@@ -217,7 +217,7 @@ void CBTFileResolverView::OnInitialUpdate()
     SortParam.bSortAsc = TRUE;
     SortParam.nColIndex = 0;
 
-    //dialogbarµÄÖ¸Õë
+    //dialogbarçš„æŒ‡é’ˆ
     m_wndDialogBar = AfxGetMainWnd()->GetDescendantWindow(AFX_IDW_DIALOGBAR);
 
     m_wndDialogBar->CheckRadioButton(IDC_RADIO_ALL, IDC_RADIO_SOFT, IDC_RADIO_ALL);
@@ -225,24 +225,24 @@ void CBTFileResolverView::OnInitialUpdate()
     m_wndDialogBar->SetDlgItemText(IDC_FILE_SIZE, _T("0"));
     m_wndDialogBar->CheckDlgButton(IDC_CHECK_AUTO_START, TRUE);
     m_wndDialogBar->CheckDlgButton(IDC_CHECK_KEYWORD_BTFILE, TRUE);
-    ((CEdit*)m_wndDialogBar->GetDlgItem(IDC_FILE_SIZE))->SetLimitText(8);//×î´ó °ÙGB
+    ((CEdit*)m_wndDialogBar->GetDlgItem(IDC_FILE_SIZE))->SetLimitText(8);//æœ€å¤§ ç™¾GB
 
 #ifndef _DEBUG
-    m_wndDialogBar->GetDlgItem(IDC_DEBUG_TEST)->ShowWindow(SW_HIDE);//ÔÚRelease°æ±¾ÖĞÒş²Ø²âÊÔ°´Å¥
+    m_wndDialogBar->GetDlgItem(IDC_DEBUG_TEST)->ShowWindow(SW_HIDE);//åœ¨Releaseç‰ˆæœ¬ä¸­éšè—æµ‹è¯•æŒ‰é’®
 #endif
 
-    //Í¼±êÁĞ±í
+    //å›¾æ ‡åˆ—è¡¨
     /*
-     *	£¡£¡Ò»¶¨ÒªÔÚCBTFileResolverViewÎö¹¹ÒÔÇ°´Óm_ListViewIL·ÖÀëËüµÄÍ¼±êÁĞ±í£¬ÒòÎªm_ListViewILµÄÍ¼±êÁĞ±íÊÇÖ¸Ïò
-     *	ÏµÍ³µÄÍ¼±êÁĞ±íµÄ£¬CBTFileResolverViewÎö¹¹Ê±»áµ÷ÓÃm_ListViewILµÄÎö¹¹Ôì³ÉÏµÍ³Í¼±êÁĞ±íµÄÄ³Ğ©Í¼±ê±»ÊÍ·Å£¬
-     *	¼ûCBTFileResolverViewµÄÎö¹¹º¯Êı¡£
-     *	m_ListViewILµÄÍ¼±êÁĞ±íÊÇÓÉÏµÍ³Î¬»¤µÄ£¬²»ÒªÌæ»»»òÌí¼Ó»òÉ¾³ıËü°üº¬µÄÍ¼±ê£¬µÃµ½¶ÔÓ¦µÄÍ¼±êË÷ÒıµÄ·½·¨¼ûGetFileInfoº¯Êı¡£
+     *	ï¼ï¼ä¸€å®šè¦åœ¨CBTFileResolverViewææ„ä»¥å‰ä»m_ListViewILåˆ†ç¦»å®ƒçš„å›¾æ ‡åˆ—è¡¨ï¼Œå› ä¸ºm_ListViewILçš„å›¾æ ‡åˆ—è¡¨æ˜¯æŒ‡å‘
+     *	ç³»ç»Ÿçš„å›¾æ ‡åˆ—è¡¨çš„ï¼ŒCBTFileResolverViewææ„æ—¶ä¼šè°ƒç”¨m_ListViewILçš„ææ„é€ æˆç³»ç»Ÿå›¾æ ‡åˆ—è¡¨çš„æŸäº›å›¾æ ‡è¢«é‡Šæ”¾ï¼Œ
+     *	è§CBTFileResolverViewçš„ææ„å‡½æ•°ã€‚
+     *	m_ListViewILçš„å›¾æ ‡åˆ—è¡¨æ˜¯ç”±ç³»ç»Ÿç»´æŠ¤çš„ï¼Œä¸è¦æ›¿æ¢æˆ–æ·»åŠ æˆ–åˆ é™¤å®ƒåŒ…å«çš„å›¾æ ‡ï¼Œå¾—åˆ°å¯¹åº”çš„å›¾æ ‡ç´¢å¼•çš„æ–¹æ³•è§GetFileInfoå‡½æ•°ã€‚
      */
     SHFILEINFO shFileInfo;
     m_ListViewIL.Attach((HIMAGELIST)SHGetFileInfo(_T(""), FILE_ATTRIBUTE_NORMAL, &shFileInfo, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES));
     GetListCtrl().SetImageList(&m_ListViewIL, LVSIL_SMALL);
 
-    //´´½¨½ø¶ÈÌõ
+    //åˆ›å»ºè¿›åº¦æ¡
     CStatusBar* pBar = (CStatusBar*)AfxGetMainWnd()->GetDescendantWindow(AFX_IDW_STATUS_BAR);
     if(pBar)
     {
@@ -255,17 +255,17 @@ void CBTFileResolverView::OnInitialUpdate()
 
     CString headers[] =
     {
-        _T("ÎÄ¼şÃû"),
-        _T("´óĞ¡"),
-        _T("ÀàĞÍ"),
-        _T("ÖÖ×ÓÄÚÂ·¾¶"),
+        _T("æ–‡ä»¶å"),
+        _T("å¤§å°"),
+        _T("ç±»å‹"),
+        _T("ç§å­å†…è·¯å¾„"),
 
-        /* ÏÂÃæÕâ¼¸Ïî¾Í²»ÔÙÏÔÊ¾ÁË£¬¿´×ÅÓĞµãÂÒ£¬¸Äµ½ÏêÏ¸ĞÅÏ¢¶Ô»°¿òÈ¥ÏÔÊ¾ÁË
-        _T("·¢²¼Õß"),
-        _T("ÖÖ×ÓÎÄ¼şÃû"),
-        _T("ÖÖ×Ó´´½¨¹¤¾ß"),
-        _T("ÖÖ×Ó´´½¨ÈÕÆÚ"),
-        _T("ÖÖ×Ó±¸×¢"),
+        /* ä¸‹é¢è¿™å‡ é¡¹å°±ä¸å†æ˜¾ç¤ºäº†ï¼Œçœ‹ç€æœ‰ç‚¹ä¹±ï¼Œæ”¹åˆ°è¯¦ç»†ä¿¡æ¯å¯¹è¯æ¡†å»æ˜¾ç¤ºäº†
+        _T("å‘å¸ƒè€…"),
+        _T("ç§å­æ–‡ä»¶å"),
+        _T("ç§å­åˆ›å»ºå·¥å…·"),
+        _T("ç§å­åˆ›å»ºæ—¥æœŸ"),
+        _T("ç§å­å¤‡æ³¨"),
         _*/
     };
 
@@ -292,7 +292,7 @@ void CBTFileResolverView::OnInitialUpdate()
 }
 
 
-// CBTFileResolverView Õï¶Ï
+// CBTFileResolverView è¯Šæ–­
 
 #ifdef _DEBUG
 void CBTFileResolverView::AssertValid() const
@@ -305,7 +305,7 @@ void CBTFileResolverView::Dump(CDumpContext& dc) const
     CListView::Dump(dc);
 }
 
-CBTFileResolverDoc* CBTFileResolverView::GetDocument() const // ·Çµ÷ÊÔ°æ±¾ÊÇÄÚÁªµÄ
+CBTFileResolverDoc* CBTFileResolverView::GetDocument() const // éè°ƒè¯•ç‰ˆæœ¬æ˜¯å†…è”çš„
 {
     ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CBTFileResolverDoc)));
     return (CBTFileResolverDoc*)m_pDocument;
@@ -313,11 +313,11 @@ CBTFileResolverDoc* CBTFileResolverView::GetDocument() const // ·Çµ÷ÊÔ°æ±¾ÊÇÄÚÁª
 #endif //_DEBUG
 
 
-// CBTFileResolverView ÏûÏ¢´¦Àí³ÌĞò
+// CBTFileResolverView æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 void CBTFileResolverView::OnFileOpenpath()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
     ::BROWSEINFO bi;
     ZeroMemory(&bi, sizeof(BROWSEINFO));
     bi.hwndOwner = AfxGetMainWnd()->GetSafeHwnd();
@@ -338,7 +338,7 @@ void CBTFileResolverView::OnFileOpenpath()
                 m_CurrentPath += _T("\\");
             }
 
-            SetStatusText(ID_INDICATOR_CURRENT_FILE_PATH, _T("µ±Ç°Ä¿Â¼£º") + m_CurrentPath);
+            SetStatusText(ID_INDICATOR_CURRENT_FILE_PATH, _T("å½“å‰ç›®å½•ï¼š") + m_CurrentPath);
 
             if(m_wndDialogBar->IsDlgButtonChecked(IDC_CHECK_AUTO_START))
             {
@@ -352,7 +352,7 @@ void CBTFileResolverView::OnActionProcess()
 {
     ASSERT(m_ProcessState == PROCESS_STATE_IDLE);
 
-    /* È¡µÃËùÓĞµÄ¹ıÂËĞÅÏ¢ */
+    /* å–å¾—æ‰€æœ‰çš„è¿‡æ»¤ä¿¡æ¯ */
     switch(m_wndDialogBar->GetCheckedRadioButton(IDC_RADIO_ALL, IDC_RADIO_SOFT))
     {
         case IDC_RADIO_ALL:
@@ -394,21 +394,21 @@ void CBTFileResolverView::OnActionProcess()
 
         if(Filter_FileSize > (DWORDLONG)_UI64_MAX / 1024)
         {
-            AfxMessageBox(_T("ÊäÈëµÄËÑË÷Ä¿±êÎÄ¼şµÄ´óĞ¡ÎŞĞ§¡£"));
+            AfxMessageBox(_T("è¾“å…¥çš„æœç´¢ç›®æ ‡æ–‡ä»¶çš„å¤§å°æ— æ•ˆã€‚"));
             return;
         }
 
         if(!Filter_FileSize && Filter_Operator == OPERATOR_LESS_THAN)
         {
-            AfxMessageBox(_T("²»ÄÜÉèÖÃËÑË÷Ä¿±êÎÄ¼şµÄ´óĞ¡²»´óÓÚ0KB¡£"));
+            AfxMessageBox(_T("ä¸èƒ½è®¾ç½®æœç´¢ç›®æ ‡æ–‡ä»¶çš„å¤§å°ä¸å¤§äº0KBã€‚"));
             return;
         }
     }
 
     Filter_Keyword_BTFile = m_wndDialogBar->IsDlgButtonChecked(IDC_CHECK_KEYWORD_BTFILE);
-    /* È¡µÃËùÓĞµÄ¹ıÂËĞÅÏ¢ */
+    /* å–å¾—æ‰€æœ‰çš„è¿‡æ»¤ä¿¡æ¯ */
 
-    //Çå³ı
+    //æ¸…é™¤
     m_vecListItems.clear();
     vecErrorFiles.clear();
     vecBTFiles.clear();
@@ -417,13 +417,13 @@ void CBTFileResolverView::OnActionProcess()
     GetListCtrl().UpdateWindow();
     UpdateFileCount();
 
-    //¿ªÊ¼ËÑË÷Ö¸¶¨Ä¿Â¼ÄÚµÄÖÖ×ÓÎÄ¼ş
+    //å¼€å§‹æœç´¢æŒ‡å®šç›®å½•å†…çš„ç§å­æ–‡ä»¶
     m_ProcessState = PROCESS_STATE_GENERATING;
     UPDATE_TOOLBAR_UI;
 
-    //ËÑË÷ÎÄ¼ş
+    //æœç´¢æ–‡ä»¶
     BeginWaitCursor();
-    SetStatusText(ID_INDICATOR_PROCESS_STATE, _T("ÕıÔÚËÑË÷ÎÄ¼ş..."));
+    SetStatusText(ID_INDICATOR_PROCESS_STATE, _T("æ­£åœ¨æœç´¢æ–‡ä»¶..."));
     SET_PROGRESS_BAR_MARQUEE_STYLE(m_Progress.GetSafeHwnd(), TRUE);
     m_Progress.ShowWindow(SW_SHOW);
     FindFile(m_CurrentPath);
@@ -431,25 +431,25 @@ void CBTFileResolverView::OnActionProcess()
     m_Progress.ShowWindow(SW_HIDE);
     EndWaitCursor();
 
-    //´´½¨¹¤×÷Ïß³Ì
+    //åˆ›å»ºå·¥ä½œçº¿ç¨‹
     bWantTerminate = FALSE;
     hThread = ::CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)&ResolveFun,
                              (LPVOID)GetSafeHwnd(), CREATE_SUSPENDED, NULL);
 
     if(!hThread)
     {
-        MessageBox(_T("´´½¨¹¤×÷Ïß³ÌÊ§°Ü¡£"), _T("´íÎó"), MB_ICONERROR);
+        MessageBox(_T("åˆ›å»ºå·¥ä½œçº¿ç¨‹å¤±è´¥ã€‚"), _T("é”™è¯¯"), MB_ICONERROR);
         m_ProcessState = PROCESS_STATE_IDLE;
-        SetStatusText(ID_INDICATOR_PROCESS_STATE, _T("´´½¨¹¤×÷Ïß³ÌÊ§°Ü"));
+        SetStatusText(ID_INDICATOR_PROCESS_STATE, _T("åˆ›å»ºå·¥ä½œçº¿ç¨‹å¤±è´¥"));
         return;
     }
     else
     {
         m_Progress.SetPos(0);
         m_Progress.ShowWindow(SW_SHOW);
-        AddKeywordToList();//½«¹Ø¼ü×Ö¼ÓÈëµ½comboµÄÁĞ±í
+        AddKeywordToList();//å°†å…³é”®å­—åŠ å…¥åˆ°comboçš„åˆ—è¡¨
 
-        //Ïß³Ì¿ªÊ¼Ö´ĞĞ
+        //çº¿ç¨‹å¼€å§‹æ‰§è¡Œ
         m_ProcessState = PROCESS_STATE_RUNNING;
         UPDATE_TOOLBAR_UI;
         ResumeThread(hThread);
@@ -460,15 +460,15 @@ void CBTFileResolverView::OnActionCancel()
 {
     ASSERT(m_ProcessState == PROCESS_STATE_RUNNING);
 
-    // TODO: Í£Ö¹ËÑË÷
-    if(IDYES == MessageBox(_T("È·¶¨Í£Ö¹ËÑË÷Ã´£¿ÒÑ¾­ËÑË÷µ½µÄ½á¹û±£Áô"),
-        _T("Í£Ö¹ËÑË÷"), MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON2))
+    // TODO: åœæ­¢æœç´¢
+    if(IDYES == MessageBox(_T("ç¡®å®šåœæ­¢æœç´¢ä¹ˆï¼Ÿå·²ç»æœç´¢åˆ°çš„ç»“æœä¿ç•™"),
+        _T("åœæ­¢æœç´¢"), MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON2))
         bWantTerminate = TRUE;
 }
 
 void CBTFileResolverView::OnActionDelete()
 {
-    // TODO: É¾³ıÑ¡ÔñµÄÎÄ¼ş
+    // TODO: åˆ é™¤é€‰æ‹©çš„æ–‡ä»¶
     if(!GetListCtrl().GetSelectedCount()) return;
 
     while(POSITION pos =
@@ -484,8 +484,8 @@ void CBTFileResolverView::OnActionDelete()
 
 void CBTFileResolverView::OnActionClear()
 {
-    // TODO: Çå¿ÕÎÄ¼şÁĞ±í
-    if(IDYES == MessageBox(_T("Çå¿ÕÁĞ±íÄÚµÄÎÄ¼ş£¿"), _T("Çå¿Õ"),
+    // TODO: æ¸…ç©ºæ–‡ä»¶åˆ—è¡¨
+    if(IDYES == MessageBox(_T("æ¸…ç©ºåˆ—è¡¨å†…çš„æ–‡ä»¶ï¼Ÿ"), _T("æ¸…ç©º"),
         MB_ICONEXCLAMATION + MB_YESNO))
     {
         m_vecListItems.clear();
@@ -496,7 +496,7 @@ void CBTFileResolverView::OnActionClear()
 
 void CBTFileResolverView::OnUpdateActions(CCmdUI *pCmdUI)
 {
-    // TODO: ÔÚ´ËÌí¼ÓÃüÁî¸üĞÂÓÃ»§½çÃæ´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤æ›´æ–°ç”¨æˆ·ç•Œé¢å¤„ç†ç¨‹åºä»£ç 
 
     switch(pCmdUI->m_nID)
     {
@@ -533,16 +533,16 @@ void CBTFileResolverView::OnUpdateActions(CCmdUI *pCmdUI)
     }
 }
 
-/* ×Ô¶¨ÒåÏûÏ¢´¦Àí - WM_THREAD_PROCESS_DONE */
+/* è‡ªå®šä¹‰æ¶ˆæ¯å¤„ç† - WM_THREAD_PROCESS_DONE */
 LRESULT CBTFileResolverView::OnWorkDone(WPARAM wParam, LPARAM lParam)
 {
-    /* Ïß³ÌÒÑ¾­´¦ÀíÍê±Ï²¢ÍË³ö */
+    /* çº¿ç¨‹å·²ç»å¤„ç†å®Œæ¯•å¹¶é€€å‡º */
     m_ProcessState = PROCESS_STATE_IDLE;
     FREE_THREAD_HANDLE(hThread);
 
     UPDATE_TOOLBAR_UI;
     UpdateFileCount();
-    SetStatusText(ID_INDICATOR_PROCESS_STATE, _T("¿ÕÏĞ"));
+    SetStatusText(ID_INDICATOR_PROCESS_STATE, _T("ç©ºé—²"));
     m_Progress.ShowWindow(SW_HIDE);
     vecBTFiles.clear();
 
@@ -552,29 +552,29 @@ LRESULT CBTFileResolverView::OnWorkDone(WPARAM wParam, LPARAM lParam)
     return S_OK;
 }
 
-/* ×Ô¶¨ÒåÏûÏ¢´¦Àí - WM_THREAD_PROCESS_RUNNING */
+/* è‡ªå®šä¹‰æ¶ˆæ¯å¤„ç† - WM_THREAD_PROCESS_RUNNING */
 LRESULT CBTFileResolverView::OnProcess(WPARAM wParam, LPARAM lParam)
 {
     if(!wParam && !lParam) return S_FALSE;
 
-    if(!lParam)//µ±lParamÎªNULLÊ±¸üĞÂ½ø¶ÈÌõ
+    if(!lParam)//å½“lParamä¸ºNULLæ—¶æ›´æ–°è¿›åº¦æ¡
     {
         CString s;
 
-        s.Format(_T("%d"), (int)wParam);//wParamÊÇµ±Ç°µÄ½ø¶È
+        s.Format(_T("%d"), (int)wParam);//wParamæ˜¯å½“å‰çš„è¿›åº¦
         SetStatusText(ID_INDICATOR_PROGRESS, s);
     }
-    else//¸üĞÂÁĞ±íÎÄ¼ş
+    else//æ›´æ–°åˆ—è¡¨æ–‡ä»¶
     {
-        PInnerFile pInnerFile = (PInnerFile)wParam;//wParam´«µİµÄÊÇInnerFile½á¹¹µÄÖ¸Õë
-        CSeedResolver* pReso = (CSeedResolver*)lParam;//lParam´«µİµÄÊÇCBTFileResolverÀàµÄÖ¸Õë
+        PInnerFile pInnerFile = (PInnerFile)wParam;//wParamä¼ é€’çš„æ˜¯InnerFileç»“æ„çš„æŒ‡é’ˆ
+        CSeedResolver* pReso = (CSeedResolver*)lParam;//lParamä¼ é€’çš„æ˜¯CBTFileResolverç±»çš„æŒ‡é’ˆ
 
         LIST_ITEM litem;
         tagForRename tagRename;
 
         litem.FileName = pInnerFile->FileName;
         GetFileInfo(litem.FileName, litem.FileTypeName);
-        litem.FileSize = pInnerFile->FileSize;//ÎÄ¼ş´óĞ¡½«ÔÚOnLvnGetdispinfoÖĞ±»¸ñÊ½»¯
+        litem.FileSize = pInnerFile->FileSize;//æ–‡ä»¶å¤§å°å°†åœ¨OnLvnGetdispinfoä¸­è¢«æ ¼å¼åŒ–
         litem.InnerPath = pInnerFile->PathName;
         litem.BTPublisher = pReso->SeedInfo.Seed_Publisher;
         litem.BTFileName = pReso->SeedInfo.Seed_FileName;
@@ -591,11 +591,11 @@ LRESULT CBTFileResolverView::OnProcess(WPARAM wParam, LPARAM lParam)
         //original
         GetListCtrl().SetItemCountEx((int)m_vecListItems.size(), LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL);
 
-        /* ²»Òª¹ı¿ìµÄ¸üĞÂ½çÃæ£¬¸üĞÂ½çÃæÊÇ·Ç³£ºÄÊ±µÄ²Ù×÷ */
+        /* ä¸è¦è¿‡å¿«çš„æ›´æ–°ç•Œé¢ï¼Œæ›´æ–°ç•Œé¢æ˜¯éå¸¸è€—æ—¶çš„æ“ä½œ */
         if(::GetTickCount() - dwLastUpdateUI >= UPDATE_UI_INTERVAL)
         {
             CString s;
-            s.Format(_T("ÕıÔÚ½âÎö %s"), pReso->SeedInfo.Seed_FileName);
+            s.Format(_T("æ­£åœ¨è§£æ %s"), pReso->SeedInfo.Seed_FileName);
             SetStatusText(ID_INDICATOR_PROCESS_STATE, s);
             UpdateFileCount();
             dwLastUpdateUI = ::GetTickCount();
@@ -617,7 +617,7 @@ void CBTFileResolverView::SetStatusText(const int nCommanddID, const CString& Te
     }
     else
     {
-        /* ¸üĞÂ½ø¶ÈÌõ */
+        /* æ›´æ–°è¿›åº¦æ¡ */
         int nPos = _tstoi(Text);
         m_Progress.SetPos(nPos <= 100 ? nPos : 100);
     }
@@ -646,11 +646,11 @@ void CBTFileResolverView::FindFile(CString sPath)
 
     while(TRUE)
     {
-        //ÊÇ·ñĞèÒª¸üĞÂ½çÃæ
+        //æ˜¯å¦éœ€è¦æ›´æ–°ç•Œé¢
         if(::GetTickCount() - dwLastUpdateUI >= UPDATE_PROGRESS_INTERVAL)
         {
             m_Progress.StepIt();
-            SetStatusText(ID_INDICATOR_PROCESS_STATE, _T("ËÑË÷ ") + sPath);
+            SetStatusText(ID_INDICATOR_PROCESS_STATE, _T("æœç´¢ ") + sPath);
             dwLastUpdateUI = ::GetTickCount();
         }
 
@@ -676,7 +676,7 @@ void CBTFileResolverView::FindFile(CString sPath)
 void CBTFileResolverView::UpdateFileCount()
 {
     CString s;
-    s.Format(_T("ÎÄ¼ş×ÜÊı£º%d"), m_vecListItems.size());
+    s.Format(_T("æ–‡ä»¶æ€»æ•°ï¼š%d"), m_vecListItems.size());
     SetStatusText(ID_INDICATOR_FILE_COUNT, s);
 }
 
@@ -694,7 +694,7 @@ void CBTFileResolverView::AddKeywordToList()
 
 void CBTFileResolverView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-    // TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+    // TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
     CListView::OnRButtonDown(nFlags, point);
 
     CMenu menu;
@@ -753,7 +753,7 @@ void CBTFileResolverView::OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL b
 
 void CBTFileResolverView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-    // TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+    // TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
     CListView::OnLButtonDblClk(nFlags, point);
 
     OnViewDetail();
@@ -762,7 +762,7 @@ void CBTFileResolverView::OnLButtonDblClk(UINT nFlags, CPoint point)
 void CBTFileResolverView::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 {
     NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
-    // TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 
     LVITEM* pItem = &(pDispInfo)->item;
     int iItem = pItem->iItem;
@@ -772,10 +772,10 @@ void CBTFileResolverView::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
     {
         switch(pItem->iSubItem)
         {
-            case 0://ÎÄ¼şÃû
+            case 0://æ–‡ä»¶å
                 pItem->pszText = (LPTSTR)m_vecListItems[iItem].FileName.GetString();
                 break;
-            case 1://´óĞ¡£¬kb
+            case 1://å¤§å°ï¼Œkb
             {
                 CString FileSize = _T("");
                 int nLen = 0;
@@ -794,27 +794,27 @@ void CBTFileResolverView::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
                 _tcscpy(pItem->pszText, FileSize.GetString());
             }
             break;
-            case 2://Àà±ğÃû
+            case 2://ç±»åˆ«å
                 pItem->pszText = (LPTSTR)m_vecListItems[iItem].FileTypeName.GetString();
                 break;
-            case 3://ÖÖ×ÓÄÚÂ·¾¶
+            case 3://ç§å­å†…è·¯å¾„
                 pItem->pszText = (LPTSTR)m_vecListItems[iItem].InnerPath.GetString();
                 break;
 
-                ///* ²»ÔÙÏÔÊ¾
-            case 4://ÖÖ×Ó·¢²¼Õß
+                ///* ä¸å†æ˜¾ç¤º
+            case 4://ç§å­å‘å¸ƒè€…
                 pItem->pszText = (LPTSTR)m_vecListItems[iItem].BTPublisher.GetString();
                 break;
-            case 5://ÖÖ×ÓÎÄ¼şÃû
+            case 5://ç§å­æ–‡ä»¶å
                 pItem->pszText = (LPTSTR)m_vecListItems[iItem].BTFileName.GetString();
                 break;
-            case 6://ÖÖ×Ó´´½¨¹¤¾ß
+            case 6://ç§å­åˆ›å»ºå·¥å…·
                 pItem->pszText = (LPTSTR)m_vecListItems[iItem].BTCreator.GetString();
                 break;
-            case 7://ÖÖ×Ó´´½¨ÈÕÆÚ
+            case 7://ç§å­åˆ›å»ºæ—¥æœŸ
                 pItem->pszText = (LPTSTR)m_vecListItems[iItem].BTCreationDate.GetString();
                 break;
-            case 8://ÖÖ×Ó±¸×¢
+            case 8://ç§å­å¤‡æ³¨
                 pItem->pszText = (LPTSTR)m_vecListItems[iItem].BTComment.GetString();
                 break;
                 //*/
@@ -830,11 +830,11 @@ void CBTFileResolverView::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CBTFileResolverView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-    // TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+    // TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 
     switch(nChar)
     {
-        case VK_DELETE://´¦ÀíDEL¼ü
+        case VK_DELETE://å¤„ç†DELé”®
             OnActionDelete();
             break;
     }
@@ -845,7 +845,7 @@ void CBTFileResolverView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 void CBTFileResolverView::OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult)
 {
     LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-    // TODO: ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 
     if(m_ProcessState == PROCESS_STATE_IDLE)
     {
@@ -857,7 +857,7 @@ void CBTFileResolverView::OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult)
             SortParam.nColIndex = pNMLV->iSubItem;
         }
 
-        //ÅÅĞò
+        //æ’åº
         stable_sort(m_vecListItems.begin(), m_vecListItems.end(), IsLesser);
         GetListCtrl().Invalidate();
     }
@@ -865,7 +865,7 @@ void CBTFileResolverView::OnLvnColumnclick(NMHDR *pNMHDR, LRESULT *pResult)
     *pResult = 0;
 }
 
-//²âÊÔ°´Å¥µÄµã»÷ÏûÏ¢£¬ÔÚRelease°æ±¾ÖĞ½«Òş²Ø²âÊÔ°´Å¥
+//æµ‹è¯•æŒ‰é’®çš„ç‚¹å‡»æ¶ˆæ¯ï¼Œåœ¨Releaseç‰ˆæœ¬ä¸­å°†éšè—æµ‹è¯•æŒ‰é’®
 void CBTFileResolverView::OnBnClickedDebugTest()
 {
 
@@ -874,21 +874,21 @@ void CBTFileResolverView::OnBnClickedDebugTest()
 
 void CBTFileResolverView::OnBnClickedButton1()
 {
-    // ËµÃ÷
+    // è¯´æ˜
     CString Desciptions;
 
-    Desciptions.Format(_T("Àà±ğ£º%s\n\nÀ©Õ¹Ãû£º%s\n\n°üº¬¹Ø¼ü×Ö£º%s\n\nÎÄ¼ş´óĞ¡£º%s\n\nÑ¡ÔñÄ¿Â¼ºóÁ¢¼´¿ªÊ¼£º%s"),
-                       _T("ËÑË÷²»Í¬ÖÖÀàµÄÖÖ×ÓÄÚÎÄ¼ş£¬Èç¹û²»ÄÜÂú×ãÒªÇó£¬×ÔĞĞÖ¸¶¨À©Õ¹Ãû¡£"),
-                       _T("Ö¸¶¨ÒªËÑË÷µÄÖÖ×ÓÄÚÎÄ¼şÀ©Õ¹Ãû£¬Ö¸¶¨ºó½«ºöÂÔ¡°Àà±ğ¡±²ÎÊı£¬¶à¸öÀ©Õ¹ÃûÒÔ¿Õ¸ñ·Ö¸ô£¬²»ÒªÊäÈëµã£¬ÀıÈç£ºtxt exe dat¡£"),
-                       _T("ÖÖ×ÓÄÚÎÄ¼şÃû±ØĞë°üº¬Ö¸¶¨µÄ¹Ø¼ü×Ö£¬¶à¸ö¹Ø¼ü×ÖÒÔ¿Õ¸ñ·Ö¸ô£¬ÀıÈç£ºÖĞ¹ú ±±¾©¡£\
-                                                                                                                                                                                                                                          			\n            Èç¹û¹´Ñ¡ÁË¡°Í¬Ê±ÔÚBTÎÄ¼şÃûÖĞ²éÕÒ¡±£¬ÔòÈç¹ûÖÖ×ÓÄÚÎÄ¼şÃû²»°üº¬¹Ø¼ü×Ö£¬¶øÔÚÔÚBTÎÄ¼şÃûÖĞ°üº¬Ò²ËãÊÇ·ûºÏÌõ¼ş¡£"),
-                                                                                                                                                                                                                                                    _T("Ö¸¶¨ÖÖ×ÓÄÚÎÄ¼şµÄ´óĞ¡Ìõ¼ş£¬´óÓÚ»òĞ¡ÓÚÄ³ÊıÖµ£¬KBÎªµ¥Î»¡£"),
-                                                                                                                                                                                                                                                    _T("Ñ¡ÔñÒªËÑË÷µÄÄ¿Â¼ºóÁ¢¼´¿ªÊ¼ËÑË÷½ø³Ì¡£"));
+    Desciptions.Format(_T("ç±»åˆ«ï¼š%s\n\næ‰©å±•åï¼š%s\n\nåŒ…å«å…³é”®å­—ï¼š%s\n\næ–‡ä»¶å¤§å°ï¼š%s\n\né€‰æ‹©ç›®å½•åç«‹å³å¼€å§‹ï¼š%s"),
+                       _T("æœç´¢ä¸åŒç§ç±»çš„ç§å­å†…æ–‡ä»¶ï¼Œå¦‚æœä¸èƒ½æ»¡è¶³è¦æ±‚ï¼Œè‡ªè¡ŒæŒ‡å®šæ‰©å±•åã€‚"),
+                       _T("æŒ‡å®šè¦æœç´¢çš„ç§å­å†…æ–‡ä»¶æ‰©å±•åï¼ŒæŒ‡å®šåå°†å¿½ç•¥â€œç±»åˆ«â€å‚æ•°ï¼Œå¤šä¸ªæ‰©å±•åä»¥ç©ºæ ¼åˆ†éš”ï¼Œä¸è¦è¾“å…¥ç‚¹ï¼Œä¾‹å¦‚ï¼štxt exe datã€‚"),
+                       _T("ç§å­å†…æ–‡ä»¶åå¿…é¡»åŒ…å«æŒ‡å®šçš„å…³é”®å­—ï¼Œå¤šä¸ªå…³é”®å­—ä»¥ç©ºæ ¼åˆ†éš”ï¼Œä¾‹å¦‚ï¼šä¸­å›½ åŒ—äº¬ã€‚\
+                                                                                                                                                                                                                                          			\n            å¦‚æœå‹¾é€‰äº†â€œåŒæ—¶åœ¨BTæ–‡ä»¶åä¸­æŸ¥æ‰¾â€ï¼Œåˆ™å¦‚æœç§å­å†…æ–‡ä»¶åä¸åŒ…å«å…³é”®å­—ï¼Œè€Œåœ¨åœ¨BTæ–‡ä»¶åä¸­åŒ…å«ä¹Ÿç®—æ˜¯ç¬¦åˆæ¡ä»¶ã€‚"),
+                                                                                                                                                                                                                                                    _T("æŒ‡å®šç§å­å†…æ–‡ä»¶çš„å¤§å°æ¡ä»¶ï¼Œå¤§äºæˆ–å°äºæŸæ•°å€¼ï¼ŒKBä¸ºå•ä½ã€‚"),
+                                                                                                                                                                                                                                                    _T("é€‰æ‹©è¦æœç´¢çš„ç›®å½•åç«‹å³å¼€å§‹æœç´¢è¿›ç¨‹ã€‚"));
 
     AfxMessageBox(Desciptions, MB_ICONINFORMATION | MB_OK);
 }
 
-//´íÎóÎÄ¼ş¶Ô»°¿òµÄ»Øµ÷
+//é”™è¯¯æ–‡ä»¶å¯¹è¯æ¡†çš„å›è°ƒ
 BOOL CALLBACK DLG_ERROR_PROC(HWND hwndDlg,
                              UINT message,
                              WPARAM wParam,
@@ -929,7 +929,7 @@ BOOL CALLBACK DLG_ERROR_PROC(HWND hwndDlg,
             CListBox* pList = (CListBox*)CWnd::FromHandle(::GetDlgItem(hwndDlg, IDC_LIST_ERROR_FILES));
 
             CString Prompt;
-            Prompt.Format(_T("ÎÄ¼şÊı£º%d"), vecErrorFiles.size());
+            Prompt.Format(_T("æ–‡ä»¶æ•°ï¼š%d"), vecErrorFiles.size());
             ::SetDlgItemText(hwndDlg, IDC_STATIC_ERROR_COUNT, Prompt);
             for(vector<CString>::iterator iter = vecErrorFiles.begin();
                 iter != vecErrorFiles.end();
@@ -945,7 +945,7 @@ BOOL CALLBACK DLG_ERROR_PROC(HWND hwndDlg,
     return FALSE;
 }
 
-//ÏêÏ¸ĞÅÏ¢¶Ô»°¿òµÄ»Øµ÷
+//è¯¦ç»†ä¿¡æ¯å¯¹è¯æ¡†çš„å›è°ƒ
 BOOL CALLBACK DLG_DETAIL_PROC(HWND hwndDlg,
                               UINT message,
                               WPARAM wParam,

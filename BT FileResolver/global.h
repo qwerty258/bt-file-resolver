@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "stdafx.h"
 #include <vector>
@@ -7,7 +7,7 @@
 using namespace std;
 
 
-/* ×Ô¶¨ÒåÏûÏ¢ */
+/* è‡ªå®šä¹‰æ¶ˆæ¯ */
 #ifndef WM_THREAD_PROCESS_RUNNING
 #define WM_THREAD_PROCESS_RUNNING	(WM_USER + 100)
 #endif
@@ -16,22 +16,22 @@ using namespace std;
 #define WM_THREAD_PROCESS_DONE		(WM_USER + 101)
 #endif
 
-//¹ıÂËÎÄ¼ş´óĞ¡µÄ²Ù×÷·û£¬Ğ¡ÓÚ»ò´óÓÚ»òÎ´¶¨Òå
+//è¿‡æ»¤æ–‡ä»¶å¤§å°çš„æ“ä½œç¬¦ï¼Œå°äºæˆ–å¤§äºæˆ–æœªå®šä¹‰
 typedef enum FILTER_FILE_SIZE_OPERATOR
 {
     OPERATOR_MORE_THAN, OPERATOR_LESS_THAN, OPERATOR_UNDEFINE
 };
 
-/* ¿çÎÄ¼şÈ«¾Ö±äÁ¿ÉùÃ÷£¬ÕâĞ©±äÁ¿È«²¿ÔÚBT FileResolverView.cppÖĞ¶¨Òå */
-extern vector<CString> vecBTFiles;//ÎÄ¼şÁĞ±í£¬°üº¬ËÑË÷µ½µÄÖÖ×ÓÎÄ¼ş
-extern vector<CString> vecErrorFiles;//½âÎöÊ§°ÜµÄÎÄ¼şÁĞ±í
-extern DWORD dwLastUpdateUI;	//×îºóÒ»´Î¸üĞÂ½çÃæµÄÊ±¼ä
-extern HANDLE hThread;	//Ïß³Ì¾ä±ú
-extern BOOL bWantTerminate;	//Ïß³ÌµÄ½áÊø±êÖ¾
-extern CString Filter_Type;//ËÑË÷Àà±ğ¹ıÂË
-extern CString Filter_Keyword;//¹Ø¼ü×Ö¹ıÂË
-extern BOOL Filter_Keyword_BTFile;//ÊÇ·ñÔÚÖÖ×ÓÎÄ¼şÃûÖĞ²éÕÒ¹Ø¼ü×Ö
-extern int Filter_Operator;//¹ıÂËÎÄ¼ş´óĞ¡µÄ²Ù×÷·û
-extern CString Filter_FileExt;//Ö¸¶¨À©Õ¹Ãû
-extern DWORDLONG Filter_FileSize;//¹ıÂËÎÄ¼ş´óĞ¡
+/* è·¨æ–‡ä»¶å…¨å±€å˜é‡å£°æ˜ï¼Œè¿™äº›å˜é‡å…¨éƒ¨åœ¨BT FileResolverView.cppä¸­å®šä¹‰ */
+extern vector<CString> vecBTFiles;//æ–‡ä»¶åˆ—è¡¨ï¼ŒåŒ…å«æœç´¢åˆ°çš„ç§å­æ–‡ä»¶
+extern vector<CString> vecErrorFiles;//è§£æå¤±è´¥çš„æ–‡ä»¶åˆ—è¡¨
+extern DWORD dwLastUpdateUI;	//æœ€åä¸€æ¬¡æ›´æ–°ç•Œé¢çš„æ—¶é—´
+extern HANDLE hThread;	//çº¿ç¨‹å¥æŸ„
+extern BOOL bWantTerminate;	//çº¿ç¨‹çš„ç»“æŸæ ‡å¿—
+extern CString Filter_Type;//æœç´¢ç±»åˆ«è¿‡æ»¤
+extern CString Filter_Keyword;//å…³é”®å­—è¿‡æ»¤
+extern BOOL Filter_Keyword_BTFile;//æ˜¯å¦åœ¨ç§å­æ–‡ä»¶åä¸­æŸ¥æ‰¾å…³é”®å­—
+extern int Filter_Operator;//è¿‡æ»¤æ–‡ä»¶å¤§å°çš„æ“ä½œç¬¦
+extern CString Filter_FileExt;//æŒ‡å®šæ‰©å±•å
+extern DWORDLONG Filter_FileSize;//è¿‡æ»¤æ–‡ä»¶å¤§å°
 

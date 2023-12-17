@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "stdafx.h"
 #include "global.h"
@@ -9,7 +9,7 @@ BOOL CheckFilter(const CString& FileName, const CString& BTFileName, const DWORD
     if(FileName.IsEmpty()) return FALSE;
 
     CString BTName, Name, Ext;
-    CString CurrentKeywords = Filter_Keyword;//±£´æ¸±±¾£¬CurrentKeywords»á±»ĞŞ¸Ä
+    CString CurrentKeywords = Filter_Keyword;//ä¿å­˜å‰¯æœ¬ï¼ŒCurrentKeywordsä¼šè¢«ä¿®æ”¹
     BOOL bPassKeyword = FALSE;
     BOOL bPassType = FALSE;
     BOOL bPassSize = FALSE;
@@ -46,7 +46,7 @@ BOOL CheckFilter(const CString& FileName, const CString& BTFileName, const DWORD
             bPassSize = FALSE;
     }
 
-    if(Filter_FileExt == _T(" "))//Î´Ö¸¶¨À©Õ¹Ãû£¬²»Òª¼ì²âIsEmpty()£¬ÒòÎªÒ»¶¨»áÔÚ½áÎ²Ìí¼ÓÒ»¸ö¿Õ¸ñ
+    if(Filter_FileExt == _T(" "))//æœªæŒ‡å®šæ‰©å±•åï¼Œä¸è¦æ£€æµ‹IsEmpty()ï¼Œå› ä¸ºä¸€å®šä¼šåœ¨ç»“å°¾æ·»åŠ ä¸€ä¸ªç©ºæ ¼
         bPassType = Filter_Type.IsEmpty() ? TRUE : Ext.IsEmpty() ? FALSE : Filter_Type.Find(Ext + _T(";")) >= 0;
     else
         bPassType = Ext.IsEmpty() ? FALSE : Filter_FileExt.Find(Ext + _T(" ")) >= 0;
@@ -58,7 +58,7 @@ BOOL CheckFilter(const CString& FileName, const CString& BTFileName, const DWORD
             CString Keyword = CurrentKeywords.SpanExcluding(_T(" "));
 
             if(Name.Find(Keyword) >= 0 ||
-               (Filter_Keyword_BTFile && BTName.Find(Keyword) >= 0)/* ÔÚÖÖ×ÓÎÄ¼şÃûÖĞ²éÕÒ */)
+               (Filter_Keyword_BTFile && BTName.Find(Keyword) >= 0)/* åœ¨ç§å­æ–‡ä»¶åä¸­æŸ¥æ‰¾ */)
             {
                 bPassKeyword = TRUE;
                 break;
@@ -70,12 +70,12 @@ BOOL CheckFilter(const CString& FileName, const CString& BTFileName, const DWORD
     else
         bPassKeyword = TRUE;
 
-    //Ö»ÓĞ¹Ø¼ü×Ö¡¢ÀàĞÍ¡¢´óĞ¡¶¼Âú×ãÌõ¼şµÄ²Å·µ»ØTRUE
+    //åªæœ‰å…³é”®å­—ã€ç±»å‹ã€å¤§å°éƒ½æ»¡è¶³æ¡ä»¶çš„æ‰è¿”å›TRUE
     return bPassKeyword && bPassType && bPassSize;
 
 }
 
-DWORD WINAPI ResolveFun(LPVOID lpParam /* Ö÷µ÷µÄ´°¿ÚÀà¾ä±ú */)
+DWORD WINAPI ResolveFun(LPVOID lpParam /* ä¸»è°ƒçš„çª—å£ç±»å¥æŸ„ */)
 {
     int nPos = 0;
     //int nFileCount = vecBTFiles.size();

@@ -1,4 +1,4 @@
-// BT FileResolverDoc.cpp : CBTFileResolverDoc ÀàµÄÊµÏÖ
+ï»¿// BT FileResolverDoc.cpp : CBTFileResolverDoc ç±»çš„å®ç°
 //
 
 #include "stdafx.h"
@@ -19,11 +19,11 @@ BEGIN_MESSAGE_MAP(CBTFileResolverDoc, CDocument)
 END_MESSAGE_MAP()
 
 
-// CBTFileResolverDoc ¹¹Ôì/Îö¹¹
+// CBTFileResolverDoc æ„é€ /ææ„
 
 CBTFileResolverDoc::CBTFileResolverDoc()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÒ»´ÎĞÔ¹¹Ôì´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ ä¸€æ¬¡æ€§æ„é€ ä»£ç 
 
 }
 
@@ -36,8 +36,8 @@ BOOL CBTFileResolverDoc::OnNewDocument()
     if(!CDocument::OnNewDocument())
         return FALSE;
 
-    // TODO: ÔÚ´ËÌí¼ÓÖØĞÂ³õÊ¼»¯´úÂë
-    // (SDI ÎÄµµ½«ÖØÓÃ¸ÃÎÄµµ)
+    // TODO: åœ¨æ­¤æ·»åŠ é‡æ–°åˆå§‹åŒ–ä»£ç 
+    // (SDI æ–‡æ¡£å°†é‡ç”¨è¯¥æ–‡æ¡£)
 
     return TRUE;
 }
@@ -45,22 +45,22 @@ BOOL CBTFileResolverDoc::OnNewDocument()
 
 
 
-// CBTFileResolverDoc ĞòÁĞ»¯
+// CBTFileResolverDoc åºåˆ—åŒ–
 
 void CBTFileResolverDoc::Serialize(CArchive& ar)
 {
     if(ar.IsStoring())
     {
-        // TODO: ÔÚ´ËÌí¼Ó´æ´¢´úÂë
+        // TODO: åœ¨æ­¤æ·»åŠ å­˜å‚¨ä»£ç 
     }
     else
     {
-        // TODO: ÔÚ´ËÌí¼Ó¼ÓÔØ´úÂë
+        // TODO: åœ¨æ­¤æ·»åŠ åŠ è½½ä»£ç 
     }
 }
 
 
-// CBTFileResolverDoc Õï¶Ï
+// CBTFileResolverDoc è¯Šæ–­
 
 #ifdef _DEBUG
 void CBTFileResolverDoc::AssertValid() const

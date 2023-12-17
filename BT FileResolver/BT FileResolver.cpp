@@ -1,4 +1,4 @@
-// BT FileResolver.cpp : ¶¨ÒåÓ¦ÓÃ³ÌĞòµÄÀàĞĞÎª¡£
+ï»¿// BT FileResolver.cpp : å®šä¹‰åº”ç”¨ç¨‹åºçš„ç±»è¡Œä¸ºã€‚
 //
 
 #include "stdafx.h"
@@ -20,79 +20,77 @@ BEGIN_MESSAGE_MAP(CBTFileResolverApp, CWinApp)
 END_MESSAGE_MAP()
 
 
-// CBTFileResolverApp ¹¹Ôì
+// CBTFileResolverApp æ„é€ 
 
 CBTFileResolverApp::CBTFileResolverApp()
 {
-    // TODO: ÔÚ´Ë´¦Ìí¼Ó¹¹Ôì´úÂë£¬
-    // ½«ËùÓĞÖØÒªµÄ³õÊ¼»¯·ÅÖÃÔÚ InitInstance ÖĞ
+    // TODO: åœ¨æ­¤å¤„æ·»åŠ æ„é€ ä»£ç ï¼Œ
+    // å°†æ‰€æœ‰é‡è¦çš„åˆå§‹åŒ–æ”¾ç½®åœ¨ InitInstance ä¸­
 }
 
 
-// Î¨Ò»µÄÒ»¸ö CBTFileResolverApp ¶ÔÏó
+// å”¯ä¸€çš„ä¸€ä¸ª CBTFileResolverApp å¯¹è±¡
 
 CBTFileResolverApp theApp;
 
 
-// CBTFileResolverApp ³õÊ¼»¯
+// CBTFileResolverApp åˆå§‹åŒ–
 
 BOOL CBTFileResolverApp::InitInstance()
 {
-    // Èç¹ûÒ»¸öÔËĞĞÔÚ Windows XP ÉÏµÄÓ¦ÓÃ³ÌĞòÇåµ¥Ö¸¶¨Òª
-    // Ê¹ÓÃ ComCtl32.dll °æ±¾ 6 »ò¸ü¸ß°æ±¾À´ÆôÓÃ¿ÉÊÓ»¯·½Ê½£¬
-    //ÔòĞèÒª InitCommonControlsEx()¡£·ñÔò£¬½«ÎŞ·¨´´½¨´°¿Ú¡£
+    // å¦‚æœä¸€ä¸ªè¿è¡Œåœ¨ Windows XP ä¸Šçš„åº”ç”¨ç¨‹åºæ¸…å•æŒ‡å®šè¦
+    // ä½¿ç”¨ ComCtl32.dll ç‰ˆæœ¬ 6 æˆ–æ›´é«˜ç‰ˆæœ¬æ¥å¯ç”¨å¯è§†åŒ–æ–¹å¼ï¼Œ
+    //åˆ™éœ€è¦ InitCommonControlsEx()ã€‚å¦åˆ™ï¼Œå°†æ— æ³•åˆ›å»ºçª—å£ã€‚
     INITCOMMONCONTROLSEX InitCtrls;
     InitCtrls.dwSize = sizeof(InitCtrls);
-    // ½«ËüÉèÖÃÎª°üÀ¨ËùÓĞÒªÔÚÓ¦ÓÃ³ÌĞòÖĞÊ¹ÓÃµÄ
-    // ¹«¹²¿Ø¼şÀà¡£
+    // å°†å®ƒè®¾ç½®ä¸ºåŒ…æ‹¬æ‰€æœ‰è¦åœ¨åº”ç”¨ç¨‹åºä¸­ä½¿ç”¨çš„
+    // å…¬å…±æ§ä»¶ç±»ã€‚
     InitCtrls.dwICC = ICC_WIN95_CLASSES;
     InitCommonControlsEx(&InitCtrls);
 
     CWinApp::InitInstance();
 
-    // ³õÊ¼»¯ OLE ¿â
+    // åˆå§‹åŒ– OLE åº“
     if(!AfxOleInit())
     {
         AfxMessageBox(IDP_OLE_INIT_FAILED);
         return FALSE;
     }
     AfxEnableControlContainer();
-    // ±ê×¼³õÊ¼»¯
-    // Èç¹ûÎ´Ê¹ÓÃÕâĞ©¹¦ÄÜ²¢Ï£Íû¼õĞ¡
-    // ×îÖÕ¿ÉÖ´ĞĞÎÄ¼şµÄ´óĞ¡£¬ÔòÓ¦ÒÆ³ıÏÂÁĞ
-    // ²»ĞèÒªµÄÌØ¶¨³õÊ¼»¯Àı³Ì
-    // ¸ü¸ÄÓÃÓÚ´æ´¢ÉèÖÃµÄ×¢²á±íÏî
-    // TODO: Ó¦ÊÊµ±ĞŞ¸Ä¸Ã×Ö·û´®£¬
-    // ÀıÈçĞŞ¸ÄÎª¹«Ë¾»ò×éÖ¯Ãû
-    //SetRegistryKey(_T("Ó¦ÓÃ³ÌĞòÏòµ¼Éú³ÉµÄ±¾µØÓ¦ÓÃ³ÌĞò"));
-    LoadStdProfileSettings(4);  // ¼ÓÔØ±ê×¼ INI ÎÄ¼şÑ¡Ïî(°üÀ¨ MRU)
-    // ×¢²áÓ¦ÓÃ³ÌĞòµÄÎÄµµÄ£°å¡£ÎÄµµÄ£°å
-    // ½«ÓÃ×÷ÎÄµµ¡¢¿ò¼Ü´°¿ÚºÍÊÓÍ¼Ö®¼äµÄÁ¬½Ó
+    // æ ‡å‡†åˆå§‹åŒ–
+    // å¦‚æœæœªä½¿ç”¨è¿™äº›åŠŸèƒ½å¹¶å¸Œæœ›å‡å°
+    // æœ€ç»ˆå¯æ‰§è¡Œæ–‡ä»¶çš„å¤§å°ï¼Œåˆ™åº”ç§»é™¤ä¸‹åˆ—
+    // ä¸éœ€è¦çš„ç‰¹å®šåˆå§‹åŒ–ä¾‹ç¨‹
+    // æ›´æ”¹ç”¨äºå­˜å‚¨è®¾ç½®çš„æ³¨å†Œè¡¨é¡¹
+    // TODO: åº”é€‚å½“ä¿®æ”¹è¯¥å­—ç¬¦ä¸²ï¼Œ
+    // ä¾‹å¦‚ä¿®æ”¹ä¸ºå…¬å¸æˆ–ç»„ç»‡å
+    //SetRegistryKey(_T("åº”ç”¨ç¨‹åºå‘å¯¼ç”Ÿæˆçš„æœ¬åœ°åº”ç”¨ç¨‹åº"));
+    LoadStdProfileSettings(4);  // åŠ è½½æ ‡å‡† INI æ–‡ä»¶é€‰é¡¹(åŒ…æ‹¬ MRU)
+    // æ³¨å†Œåº”ç”¨ç¨‹åºçš„æ–‡æ¡£æ¨¡æ¿ã€‚æ–‡æ¡£æ¨¡æ¿
+    // å°†ç”¨ä½œæ–‡æ¡£ã€æ¡†æ¶çª—å£å’Œè§†å›¾ä¹‹é—´çš„è¿æ¥
     CSingleDocTemplate* pDocTemplate;
-    pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CBTFileResolverDoc), RUNTIME_CLASS(CMainFrame),/*Ö÷ SDI ¿ò¼Ü´°¿Ú*/RUNTIME_CLASS(CBTFileResolverView));
+    pDocTemplate = new CSingleDocTemplate(IDR_MAINFRAME, RUNTIME_CLASS(CBTFileResolverDoc), RUNTIME_CLASS(CMainFrame),/*ä¸» SDI æ¡†æ¶çª—å£*/RUNTIME_CLASS(CBTFileResolverView));
     if(!pDocTemplate)
         return FALSE;
     AddDocTemplate(pDocTemplate);
 
-
-
-    // ·ÖÎö±ê×¼Íâ¿ÇÃüÁî¡¢DDE¡¢´ò¿ªÎÄ¼ş²Ù×÷µÄÃüÁîĞĞ
-    CCommandLineInfo cmdInfo;
-    ParseCommandLine(cmdInfo);
-
-
-    // µ÷¶ÈÔÚÃüÁîĞĞÖĞÖ¸¶¨µÄÃüÁî¡£Èç¹û
-    // ÓÃ /RegServer¡¢/Register¡¢/Unregserver »ò /Unregister Æô¶¯Ó¦ÓÃ³ÌĞò£¬Ôò·µ»Ø FALSE¡£
-    if(!ProcessShellCommand(cmdInfo))
-        return FALSE;
-
-    // Î¨Ò»µÄÒ»¸ö´°¿ÚÒÑ³õÊ¼»¯£¬Òò´ËÏÔÊ¾Ëü²¢¶ÔÆä½øĞĞ¸üĞÂ
+    // å”¯ä¸€çš„ä¸€ä¸ªçª—å£å·²åˆå§‹åŒ–ï¼Œå› æ­¤æ˜¾ç¤ºå®ƒå¹¶å¯¹å…¶è¿›è¡Œæ›´æ–°
     m_pMainWnd->ShowWindow(SW_SHOW);
     m_pMainWnd->UpdateWindow();
 
+    // åˆ†ææ ‡å‡†å¤–å£³å‘½ä»¤ã€DDEã€æ‰“å¼€æ–‡ä»¶æ“ä½œçš„å‘½ä»¤è¡Œ
+    //CCommandLineInfo cmdInfo;
+    //ParseCommandLine(cmdInfo);
 
-    // ½öµ±¾ßÓĞºó×ºÊ±²Åµ÷ÓÃ DragAcceptFiles
-    //  ÔÚ SDI Ó¦ÓÃ³ÌĞòÖĞ£¬ÕâÓ¦ÔÚ ProcessShellCommand Ö®ºó·¢Éú
+
+    // è°ƒåº¦åœ¨å‘½ä»¤è¡Œä¸­æŒ‡å®šçš„å‘½ä»¤ã€‚å¦‚æœ
+    // ç”¨ /RegServerã€/Registerã€/Unregserver æˆ– /Unregister å¯åŠ¨åº”ç”¨ç¨‹åºï¼Œåˆ™è¿”å› FALSEã€‚
+    //if(!ProcessShellCommand(cmdInfo))
+    //    return FALSE;
+
+
+    // ä»…å½“å…·æœ‰åç¼€æ—¶æ‰è°ƒç”¨ DragAcceptFiles
+    //  åœ¨ SDI åº”ç”¨ç¨‹åºä¸­ï¼Œè¿™åº”åœ¨ ProcessShellCommand ä¹‹åå‘ç”Ÿ
     //  
 
 
@@ -101,23 +99,23 @@ BOOL CBTFileResolverApp::InitInstance()
 
 
 
-// ÓÃÓÚÓ¦ÓÃ³ÌĞò¡°¹ØÓÚ¡±²Ëµ¥ÏîµÄ CAboutDlg ¶Ô»°¿ò
+// ç”¨äºåº”ç”¨ç¨‹åºâ€œå…³äºâ€èœå•é¡¹çš„ CAboutDlg å¯¹è¯æ¡†
 
 class CAboutDlg: public CDialog
 {
 public:
     CAboutDlg();
 
-    // ¶Ô»°¿òÊı¾İ
+    // å¯¹è¯æ¡†æ•°æ®
     enum
     {
         IDD = IDD_ABOUTBOX
     };
 
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
-    // ÊµÏÖ
+    // å®ç°
 protected:
     DECLARE_MESSAGE_MAP()
 };
@@ -134,12 +132,12 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
-// ÓÃÓÚÔËĞĞ¶Ô»°¿òµÄÓ¦ÓÃ³ÌĞòÃüÁî
+// ç”¨äºè¿è¡Œå¯¹è¯æ¡†çš„åº”ç”¨ç¨‹åºå‘½ä»¤
 void CBTFileResolverApp::OnAppAbout()
 {
     CAboutDlg aboutDlg;
     aboutDlg.DoModal();
 }
 
-// CBTFileResolverApp ÏûÏ¢´¦Àí³ÌĞò
+// CBTFileResolverApp æ¶ˆæ¯å¤„ç†ç¨‹åº
 

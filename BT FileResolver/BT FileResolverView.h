@@ -1,18 +1,18 @@
-// BT FileResolverView.h : CBTFileResolverView ÀàµÄ½Ó¿Ú
+ï»¿// BT FileResolverView.h : CBTFileResolverView ç±»çš„æ¥å£
 //
 
 
 #pragma once
 #include <vector>
 
-//ÅÅĞò
+//æ’åº
 typedef struct _SORT_PARAM
 {
     BOOL bSortAsc;
     int nColIndex;
 }SORT_PARAM, *PSORT_PARAM;
 
-//listctrlµÄÊı¾İ
+//listctrlçš„æ•°æ®
 typedef struct _LIST_ITEM
 {
     CString FileName;
@@ -40,7 +40,7 @@ private:
     CString m_CurrentPath;
     CProgressCtrl m_Progress;
 
-    /* ×îºÃ²»ÒªÊ¹ÓÃset£¬ËäÈ»ÅÅĞòËÙ¶È¿ì£¬µ«ÓÉÓÚÊ¹ÓÃvirtual listÏÔÊ¾ÎÄ¼ş£¬¶ÁÈ¡Êı¾İÊ±²»ºÃ´¦Àí */
+    /* æœ€å¥½ä¸è¦ä½¿ç”¨setï¼Œè™½ç„¶æ’åºé€Ÿåº¦å¿«ï¼Œä½†ç”±äºä½¿ç”¨virtual listæ˜¾ç¤ºæ–‡ä»¶ï¼Œè¯»å–æ•°æ®æ—¶ä¸å¥½å¤„ç† */
     std::vector<LIST_ITEM> m_vecListItems;
     std::vector<tagForRename> m_vecRenam;
 
@@ -52,21 +52,21 @@ private:
     void UpdateFileCount();
     void AddKeywordToList();
 
-protected: // ½ö´ÓĞòÁĞ»¯´´½¨
+protected: // ä»…ä»åºåˆ—åŒ–åˆ›å»º
     CBTFileResolverView();
     DECLARE_DYNCREATE(CBTFileResolverView)
 
-    // ÊôĞÔ
+    // å±æ€§
 public:
     CBTFileResolverDoc* GetDocument() const;
 
-    // ÖØĞ´
+    // é‡å†™
 public:
     virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 protected:
-    virtual void OnInitialUpdate(); // ¹¹ÔìºóµÚÒ»´Îµ÷ÓÃ
+    virtual void OnInitialUpdate(); // æ„é€ åç¬¬ä¸€æ¬¡è°ƒç”¨
 
-    // ÊµÏÖ
+    // å®ç°
 public:
     virtual ~CBTFileResolverView();
 #ifdef _DEBUG
@@ -76,7 +76,7 @@ public:
 
 protected:
 
-    // Éú³ÉµÄÏûÏ¢Ó³Éäº¯Êı
+    // ç”Ÿæˆçš„æ¶ˆæ¯æ˜ å°„å‡½æ•°
 protected:
     DECLARE_MESSAGE_MAP()
     afx_msg void OnFileOpenpath();
@@ -103,7 +103,7 @@ public:
     afx_msg void OnFileRenamezyf();
 };
 
-#ifndef _DEBUG  // BT FileResolverView.cpp ÖĞµÄµ÷ÊÔ°æ±¾
+#ifndef _DEBUG  // BT FileResolverView.cpp ä¸­çš„è°ƒè¯•ç‰ˆæœ¬
 inline CBTFileResolverDoc* CBTFileResolverView::GetDocument() const
 {
     return reinterpret_cast<CBTFileResolverDoc*>(m_pDocument);

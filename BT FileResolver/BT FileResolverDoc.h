@@ -1,4 +1,4 @@
-// BT FileResolverDoc.h : CBTFileResolverDoc ÀàµÄ½Ó¿Ú
+ï»¿// BT FileResolverDoc.h : CBTFileResolverDoc ç±»çš„æ¥å£
 //
 
 
@@ -7,22 +7,22 @@
 
 class CBTFileResolverDoc: public CDocument
 {
-protected: // ½ö´ÓĞòÁĞ»¯´´½¨
+protected: // ä»…ä»åºåˆ—åŒ–åˆ›å»º
     CBTFileResolverDoc();
     DECLARE_DYNCREATE(CBTFileResolverDoc)
 
-    // ÊôĞÔ
+    // å±æ€§
 public:
 
-    // ²Ù×÷
+    // æ“ä½œ
 public:
 
-    // ÖØĞ´
+    // é‡å†™
 public:
     virtual BOOL OnNewDocument();
     virtual void Serialize(CArchive& ar);
 
-    // ÊµÏÖ
+    // å®ç°
 public:
     virtual ~CBTFileResolverDoc();
 #ifdef _DEBUG
@@ -32,7 +32,7 @@ public:
 
 protected:
 
-    // Éú³ÉµÄÏûÏ¢Ó³Éäº¯Êı
+    // ç”Ÿæˆçš„æ¶ˆæ¯æ˜ å°„å‡½æ•°
 protected:
     DECLARE_MESSAGE_MAP()
 };

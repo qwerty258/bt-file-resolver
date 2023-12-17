@@ -1,4 +1,4 @@
-// MainFrm.cpp : CMainFrame ÀàµÄÊµÏÖ
+ï»¿// MainFrm.cpp : CMainFrame ç±»çš„å®ç°
 //
 
 #include "stdafx.h"
@@ -32,11 +32,11 @@ static UINT indicators[] =
 };
 
 
-// CMainFrame ¹¹Ôì/Îö¹¹
+// CMainFrame æ„é€ /ææ„
 
 CMainFrame::CMainFrame()
 {
-    // TODO: ÔÚ´ËÌí¼Ó³ÉÔ±³õÊ¼»¯´úÂë
+    // TODO: åœ¨æ­¤æ·»åŠ æˆå‘˜åˆå§‹åŒ–ä»£ç 
 }
 
 CMainFrame::~CMainFrame()
@@ -51,19 +51,19 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     if(!m_wndToolBar.CreateEx(this, NULL, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) || !m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
     {
-        TRACE0("Î´ÄÜ´´½¨¹¤¾ßÀ¸\n");
-        return -1;      // Î´ÄÜ´´½¨
+        TRACE0("æœªèƒ½åˆ›å»ºå·¥å…·æ \n");
+        return -1;      // æœªèƒ½åˆ›å»º
     }
 
     if(!m_wndStatusBar.Create(this) || !m_wndStatusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT)))
     {
-        TRACE0("Î´ÄÜ´´½¨×´Ì¬À¸\n");
-        return -1;      // Î´ÄÜ´´½¨
+        TRACE0("æœªèƒ½åˆ›å»ºçŠ¶æ€æ \n");
+        return -1;      // æœªèƒ½åˆ›å»º
     }
 
     if(!m_wndInfoPanel.Create(this, IDD_INFO_PANEL, CBRS_TOOLTIPS | CBRS_LEFT, AFX_IDW_DIALOGBAR))
     {
-        TRACE0("Î´ÄÜ´´½¨ĞÅÏ¢Ãæ°å\n");
+        TRACE0("æœªèƒ½åˆ›å»ºä¿¡æ¯é¢æ¿\n");
         return -1;
     }
 
@@ -98,8 +98,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
     if(!CFrameWnd::PreCreateWindow(cs))
         return FALSE;
-    // TODO: ÔÚ´Ë´¦Í¨¹ıĞŞ¸Ä
-    //  CREATESTRUCT cs À´ĞŞ¸Ä´°¿ÚÀà»òÑùÊ½
+    // TODO: åœ¨æ­¤å¤„é€šè¿‡ä¿®æ”¹
+    //  CREATESTRUCT cs æ¥ä¿®æ”¹çª—å£ç±»æˆ–æ ·å¼
     cs.style &= ~FWS_ADDTOTITLE;
 
 
@@ -107,7 +107,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 }
 
 
-// CMainFrame Õï¶Ï
+// CMainFrame è¯Šæ–­
 
 #ifdef _DEBUG
 void CMainFrame::AssertValid() const
@@ -122,12 +122,12 @@ void CMainFrame::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 
-// CMainFrame ÏûÏ¢´¦Àí³ÌĞò
+// CMainFrame æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 void CMainFrame::OnClose()
 {
-    // TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
-    if(hThread)	//Ïß³ÌÔËĞĞÊ±²»ÔÊĞí¹Ø±Õ
+    // TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
+    if(hThread)	//çº¿ç¨‹è¿è¡Œæ—¶ä¸å…è®¸å…³é—­
     {
         ::MessageBeep(MB_ICONEXCLAMATION);
         return;

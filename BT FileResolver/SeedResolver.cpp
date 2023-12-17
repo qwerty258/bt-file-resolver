@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "SeedResolver.h"
 
-//µ±½âÎöº¯ÊıÅ×³öÒì³£Ê±ÊÇ·ñÖĞ¶Ï£¬±ãÓÚµ÷ÊÔ
+//å½“è§£æå‡½æ•°æŠ›å‡ºå¼‚å¸¸æ—¶æ˜¯å¦ä¸­æ–­ï¼Œä¾¿äºè°ƒè¯•
 //#define BREAK_ON_THROW
 
 using namespace std;
@@ -17,11 +17,11 @@ CSeedResolver::CSeedResolver(const CString& SeedFileName)
 
 CSeedResolver::~CSeedResolver(void)
 {
-    //ÇåÀí
+    //æ¸…ç†
     DeallocAll();
 }
 
-//°Ñ´óĞ´×ª»»ÎªĞ¡Ğ´£¬È¡µÃÖÖ×ÓµÄ±àÂë¸ñÊ½Ê±ÒªÓÃµ½
+//æŠŠå¤§å†™è½¬æ¢ä¸ºå°å†™ï¼Œå–å¾—ç§å­çš„ç¼–ç æ ¼å¼æ—¶è¦ç”¨åˆ°
 void szCharToLower(char* pszString)
 {
     int i = 0;
@@ -57,7 +57,7 @@ BOOL CSeedResolver::Resolve()
     file.Read((void*)pBuffer, m_SeedFileSize);
     file.Close();
 
-    //ResovleBufferº¯Êı½«ÒÆ¶¯Ö¸Õë£¬ËùÒÔ´«µİÒ»¸öpBufferµÄ¸±±¾£¬ÕâÑù±ãÓÚÊÍ·ÅpBuffer
+    //ResovleBufferå‡½æ•°å°†ç§»åŠ¨æŒ‡é’ˆï¼Œæ‰€ä»¥ä¼ é€’ä¸€ä¸ªpBufferçš„å‰¯æœ¬ï¼Œè¿™æ ·ä¾¿äºé‡Šæ”¾pBuffer
     pShadowBuffer = pBuffer;
 
     LPNode pNode = NULL;
@@ -77,17 +77,17 @@ BOOL CSeedResolver::Resolve()
     }
 #endif	
 
-    //Çå³ıÎÄ¼ş»º³åÇø
+    //æ¸…é™¤æ–‡ä»¶ç¼“å†²åŒº
     SAFE_CLEAN(pBuffer);
 
     if(pNode->Type != BC_DICT) return FALSE;
-    //¸ù±ØĞëÊÇ¸öbencode×Öµä
+    //æ ¹å¿…é¡»æ˜¯ä¸ªbencodeå­—å…¸
 
     LPBC_Dict pRootDict = pNode->Data.bcDict;
 
-    /* ¿ªÊ¼È¡Öµ */
+    /* å¼€å§‹å–å€¼ */
 
-    //Ê×ÏÈÏÈÈ¡µÃÖÖ×ÓµÄ±àÂë¸ñÊ½
+    //é¦–å…ˆå…ˆå–å¾—ç§å­çš„ç¼–ç æ ¼å¼
     if(GetNode(pRootDict, KEYWORD_ENCODING, &pNode))
     {
         szCharToLower(pNode->Data.bcString);
@@ -95,22 +95,22 @@ BOOL CSeedResolver::Resolve()
             SeedInfo.Seed_Encoding = CP_UTF8;
         else if(strcmp(pNode->Data.bcString, "utf-7") == 0)//utf-7
             SeedInfo.Seed_Encoding = CP_UTF7;
-        else if(strcmp(pNode->Data.bcString, "gbk") == 0)//¼òÌåÖĞÎÄ
+        else if(strcmp(pNode->Data.bcString, "gbk") == 0)//ç®€ä½“ä¸­æ–‡
             SeedInfo.Seed_Encoding = 936;
-        else if(strcmp(pNode->Data.bcString, "big5") == 0)//·±ÌåÖĞÎÄ
+        else if(strcmp(pNode->Data.bcString, "big5") == 0)//ç¹ä½“ä¸­æ–‡
             SeedInfo.Seed_Encoding = 950;
-        else if(strcmp(pNode->Data.bcString, "shift_jis") == 0)//ÈÕÎÄ
+        else if(strcmp(pNode->Data.bcString, "shift_jis") == 0)//æ—¥æ–‡
             SeedInfo.Seed_Encoding = 932;
-        else if(strcmp(pNode->Data.bcString, "windows-874") == 0)//Ì©ÎÄ
+        else if(strcmp(pNode->Data.bcString, "windows-874") == 0)//æ³°æ–‡
             SeedInfo.Seed_Encoding = 874;
-        else if(strcmp(pNode->Data.bcString, "ks_c_5601-1987") == 0)//º«ÎÄ
+        else if(strcmp(pNode->Data.bcString, "ks_c_5601-1987") == 0)//éŸ©æ–‡
             SeedInfo.Seed_Encoding = 949;
-        else//ÆäËû¶¼Îªutf-8
+        else//å…¶ä»–éƒ½ä¸ºutf-8
             SeedInfo.Seed_Encoding = CP_UTF8;
     }
     else
     {
-        SeedInfo.Seed_Encoding = CP_UTF8;//Ä¬ÈÏÎªutf-8
+        SeedInfo.Seed_Encoding = CP_UTF8;//é»˜è®¤ä¸ºutf-8
     }
 
     //seed inner name for rename later zyf begin
@@ -128,62 +128,62 @@ BOOL CSeedResolver::Resolve()
     }
     //zyf end
 
-    //´´½¨ÈÕÆÚ
+    //åˆ›å»ºæ—¥æœŸ
     if(GetNode(pRootDict, KEYWORD_CREATION_DATE, &pNode) && pNode->Type == BC_INT)
     {
         CTime time(0);
         CTimeSpan ts(pNode->Data.bcInt);
 
         time += ts;
-        SeedInfo.Seed_CreationDate.Format(_T("%dÄê%.2dÔÂ%.2dÈÕ %.2dÊ±%.2d·Ö"), time.GetYear(), time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute());
+        SeedInfo.Seed_CreationDate.Format(_T("%då¹´%.2dæœˆ%.2dæ—¥ %.2dæ—¶%.2dåˆ†"), time.GetYear(), time.GetMonth(), time.GetDay(), time.GetHour(), time.GetMinute());
     }
     else
     {
-        SeedInfo.Seed_CreationDate = _T("(Î´ÖªÈÕÆÚ)");
+        SeedInfo.Seed_CreationDate = _T("(æœªçŸ¥æ—¥æœŸ)");
     }
 
-    //ÖÖ×ÓµÄ±¸×¢
-    if(GetNode(pRootDict, KEYWORD_COMMENT_UTF8, &pNode) && pNode->Type == BC_STRING)//Ê×ÏÈ¿´ÓĞÃ»ÓĞutf-8±àÂëµÄ
+    //ç§å­çš„å¤‡æ³¨
+    if(GetNode(pRootDict, KEYWORD_COMMENT_UTF8, &pNode) && pNode->Type == BC_STRING)//é¦–å…ˆçœ‹æœ‰æ²¡æœ‰utf-8ç¼–ç çš„
     {
         ConvertToUnicode(pNode->Data.bcString, SeedInfo.Seed_Comment, CP_UTF8);
     }
-    else if(GetNode(pRootDict, KEYWORD_COMMENT_UTF8, &pNode) && pNode->Type == BC_STRING)//Èç¹ûÃ»ÓĞutf-8±àÂëµÄ¾ÍÊ¹ÓÃÄÚÖÃ±àÂëµÄ
+    else if(GetNode(pRootDict, KEYWORD_COMMENT_UTF8, &pNode) && pNode->Type == BC_STRING)//å¦‚æœæ²¡æœ‰utf-8ç¼–ç çš„å°±ä½¿ç”¨å†…ç½®ç¼–ç çš„
     {
         ConvertToUnicode(pNode->Data.bcString, SeedInfo.Seed_Comment);
     }
     else
     {
-        SeedInfo.Seed_Comment = _T("(Ã»ÓĞ±¸×¢)");
+        SeedInfo.Seed_Comment = _T("(æ²¡æœ‰å¤‡æ³¨)");
     }
 
-    //ÖÖ×ÓµÄ´´½¨¹¤¾ß
+    //ç§å­çš„åˆ›å»ºå·¥å…·
     if(GetNode(pRootDict, KEYWORD_CREATED_BY, &pNode) && pNode->Type == BC_STRING)
     {
         ConvertToUnicode(pNode->Data.bcString, SeedInfo.Seed_Creator, CP_UTF8);
     }
     else
     {
-        SeedInfo.Seed_Creator = _T("(Î´Öª)");
+        SeedInfo.Seed_Creator = _T("(æœªçŸ¥)");
     }
 
-    //ÖÖ×ÓµÄ·¢²¼Õß
-    if(GetNode(pRootDict, KEYWORD_PUBLISHER_UTF8, &pNode) &&//Ê×ÏÈ¿´ÓĞÃ»ÓĞutf-8±àÂëµÄ
+    //ç§å­çš„å‘å¸ƒè€…
+    if(GetNode(pRootDict, KEYWORD_PUBLISHER_UTF8, &pNode) &&//é¦–å…ˆçœ‹æœ‰æ²¡æœ‰utf-8ç¼–ç çš„
        pNode->Type == BC_STRING)
     {
         ConvertToUnicode(pNode->Data.bcString, SeedInfo.Seed_Publisher, CP_UTF8);
     }
-    else if(GetNode(pRootDict, KEYWORD_PUBLISHER, &pNode) &&//Èç¹ûÃ»ÓĞutf-8±àÂëµÄ¾ÍÊ¹ÓÃÄÚÖÃ±àÂëµÄ
+    else if(GetNode(pRootDict, KEYWORD_PUBLISHER, &pNode) &&//å¦‚æœæ²¡æœ‰utf-8ç¼–ç çš„å°±ä½¿ç”¨å†…ç½®ç¼–ç çš„
             pNode->Type == BC_STRING)
     {
         ConvertToUnicode(pNode->Data.bcString, SeedInfo.Seed_Publisher);
     }
     else
     {
-        SeedInfo.Seed_Publisher = _T("(Î´Öª)");
+        SeedInfo.Seed_Publisher = _T("(æœªçŸ¥)");
     }
 
-    //¶ÁÈ¡ÖÖ×ÓÄÚµÄËùÓĞÎÄ¼ş
-    LPBC_Dict pInfoDict = NULL;//info×Öµä
+    //è¯»å–ç§å­å†…çš„æ‰€æœ‰æ–‡ä»¶
+    LPBC_Dict pInfoDict = NULL;//infoå­—å…¸
 
     if(!GetNode(pRootDict, KEYWORD_INFO, &pNode) || pNode->Type != BC_DICT) return FALSE;
 
@@ -192,13 +192,13 @@ BOOL CSeedResolver::Resolve()
 
     GetNode(pInfoDict, KEYWORD_FILES, &pNode);
 
-    //Èç¹ûpNodeÎªNULL£¬¼´Ã»ÓĞÕÒµ½¹Ø¼üKEYWORD_FILES£¬ÄÇÃ´ÕâÊÇ¸öµ¥ÎÄ¼şÖÖ×Ó£¬·ñÔòÎª¶àÎÄ¼şÖÖ×Ó»òÕßÎŞĞ§
+    //å¦‚æœpNodeä¸ºNULLï¼Œå³æ²¡æœ‰æ‰¾åˆ°å…³é”®KEYWORD_FILESï¼Œé‚£ä¹ˆè¿™æ˜¯ä¸ªå•æ–‡ä»¶ç§å­ï¼Œå¦åˆ™ä¸ºå¤šæ–‡ä»¶ç§å­æˆ–è€…æ— æ•ˆ
     if(!pNode)
     {
         InnerFile iFile;
         int nCodePage = 0;
 
-        //µ¥ÎÄ¼şÄ£Ê½info×ÖµäµÄname¹Ø¼ü×ÖÊÇÎÄ¼şÃû
+        //å•æ–‡ä»¶æ¨¡å¼infoå­—å…¸çš„nameå…³é”®å­—æ˜¯æ–‡ä»¶å
         if(GetNode(pInfoDict, KEYWORD_NAME_UTF8, &pNode))
             nCodePage = CP_UTF8;
         else if(GetNode(pInfoDict, KEYWORD_NAME, &pNode))
@@ -211,7 +211,7 @@ BOOL CSeedResolver::Resolve()
         ConvertToUnicode(pNode->Data.bcString, iFile.FileName, nCodePage);
         iFile.PathName = _T("\\");
 
-        //ÎÄ¼ş´óĞ¡
+        //æ–‡ä»¶å¤§å°
         if(!GetNode(pInfoDict, KEYWORD_LENGTH, &pNode) || pNode->Type != BC_INT)
             return FALSE;
         else
@@ -221,21 +221,21 @@ BOOL CSeedResolver::Resolve()
     }
     else if(pNode->Type == BC_LIST)
     {
-        /* ÕâÀïµÄ´úÂëÓĞµã²»Ì«ÈİÒ×¿´¶®£¬ÎÒ¶îÍâ¶¨ÒåÁËpFileDictºÍpPathListÁ½¸ö±äÁ¿
-         * Ê¹´úÂëÇåÎúĞ©£¬Ö»Òª¼Ç×¡LPBC_DictÊÇÖ¸ÏòBC_Dict½á¹¹µÄÖ¸Õë£¬¶øLPBC_ListÊÇ
-         * Ö¸ÏòNode½á¹¹µÄÖ¸ÕëµÄÖ¸Õë*/
-        LPBC_List pFileList = pNode->Data.bcList;//info×ÖµäÄÚµÄfilesÁĞ±í
+        /* è¿™é‡Œçš„ä»£ç æœ‰ç‚¹ä¸å¤ªå®¹æ˜“çœ‹æ‡‚ï¼Œæˆ‘é¢å¤–å®šä¹‰äº†pFileDictå’ŒpPathListä¸¤ä¸ªå˜é‡
+         * ä½¿ä»£ç æ¸…æ™°äº›ï¼Œåªè¦è®°ä½LPBC_Dictæ˜¯æŒ‡å‘BC_Dictç»“æ„çš„æŒ‡é’ˆï¼Œè€ŒLPBC_Listæ˜¯
+         * æŒ‡å‘Nodeç»“æ„çš„æŒ‡é’ˆçš„æŒ‡é’ˆ*/
+        LPBC_List pFileList = pNode->Data.bcList;//infoå­—å…¸å†…çš„filesåˆ—è¡¨
 
         while(*pFileList)
         {
-            if((*pFileList)->Type != BC_DICT) return FALSE;//Ã¿¸öÁĞ±íÏîÄ¿±ØĞë¶¼ÊÇ×ÖµäÀàĞÍ
+            if((*pFileList)->Type != BC_DICT) return FALSE;//æ¯ä¸ªåˆ—è¡¨é¡¹ç›®å¿…é¡»éƒ½æ˜¯å­—å…¸ç±»å‹
 
             LPBC_Dict pFileDict = (*pFileList)->Data.bcDict;
 
             InnerFile iFile;
             int nCodePage = 0;
 
-            //È·¶¨´úÂëÒ³£¬²¢È¡µÃpathÁĞ±í
+            //ç¡®å®šä»£ç é¡µï¼Œå¹¶å–å¾—pathåˆ—è¡¨
             if(GetNode(pFileDict, KEYWORD_PATH_UTF8, &pNode))
                 nCodePage = CP_UTF8;
             else if(GetNode(pFileDict, KEYWORD_PATH, &pNode))
@@ -243,14 +243,14 @@ BOOL CSeedResolver::Resolve()
             else
                 return FALSE;
 
-            if(pNode->Type != BC_LIST) return FALSE;//path±ØĞëÊÇÁĞ±í
+            if(pNode->Type != BC_LIST) return FALSE;//pathå¿…é¡»æ˜¯åˆ—è¡¨
 
             LPBC_List pPathList = pNode->Data.bcList;
-            vector<CString> vecTemp;//ÁÙÊ±´æ´¢
+            vector<CString> vecTemp;//ä¸´æ—¶å­˜å‚¨
 
             while(*pPathList)
             {
-                if((*pPathList)->Type != BC_STRING) return FALSE;//pathµÄÃ¿¸öÏîÄ¿±ØĞëÊÇ×Ö·û´®
+                if((*pPathList)->Type != BC_STRING) return FALSE;//pathçš„æ¯ä¸ªé¡¹ç›®å¿…é¡»æ˜¯å­—ç¬¦ä¸²
 
                 CString s;
 
@@ -260,8 +260,8 @@ BOOL CSeedResolver::Resolve()
                 ++(pPathList);
             }
 
-            //»¹Òª¶ÔvecTemp½øĞĞ½âÎö£¬·Ö½â³öÎÄ¼şÃûºÍÄ¿Â¼
-            if(vecTemp.front().Find(_T(BITCOMET_PADDING_FILE_PREFIX)) != 0)//²»½âÎöBitCometµÄÄÚÇ¶ÎÄ¼ş
+            //è¿˜è¦å¯¹vecTempè¿›è¡Œè§£æï¼Œåˆ†è§£å‡ºæ–‡ä»¶åå’Œç›®å½•
+            if(vecTemp.front().Find(_T(BITCOMET_PADDING_FILE_PREFIX)) != 0)//ä¸è§£æBitCometçš„å†…åµŒæ–‡ä»¶
             {
                 iFile.FileName = vecTemp.back();
                 vecTemp.pop_back();
@@ -272,14 +272,14 @@ BOOL CSeedResolver::Resolve()
                 if(iFile.PathName.IsEmpty()) iFile.PathName = _T("\\");
 
 
-                //È¡µÃÎÄ¼ş´óĞ¡
+                //å–å¾—æ–‡ä»¶å¤§å°
                 if(!GetNode(pFileDict, KEYWORD_LENGTH, &pNode) ||
                    pNode->Type != BC_INT)
                    return FALSE;
                 else
                     iFile.FileSize = pNode->Data.bcInt;
 
-                //½«iFile¼ÓÈëSeedInfo.Seed_Files
+                //å°†iFileåŠ å…¥SeedInfo.Seed_Files
                 SeedInfo.Seed_Files.push_back(iFile);
             }
 
@@ -311,10 +311,10 @@ LPNode CSeedResolver::ResovleBuffer(char** pBuffer)
             pNode = (LPNode)malloc(sizeof(Node));
 
             pNode->Type = BC_STRING;
-            pNode->Data.bcString = GetBCString(pBuffer);//²»ÓÃ±£´æGetBCString·µ»ØµÄÖ¸Õë£¬GetBCString»á¾ö¶¨ÊÇ·ñ±£´æÕâ¸öÖ¸Õë
+            pNode->Data.bcString = GetBCString(pBuffer);//ä¸ç”¨ä¿å­˜GetBCStringè¿”å›çš„æŒ‡é’ˆï¼ŒGetBCStringä¼šå†³å®šæ˜¯å¦ä¿å­˜è¿™ä¸ªæŒ‡é’ˆ
             vecAllocated.push_back((INT_PTR)pNode);
 
-            if(!pNode->Data.bcString) throw NULL;//ÖÖ×ÓÎÄ¼şÓĞ´íÎó
+            if(!pNode->Data.bcString) throw NULL;//ç§å­æ–‡ä»¶æœ‰é”™è¯¯
             break;
         case BENCODE_PREFIX_INT:
             pNode = (LPNode)malloc(sizeof(Node));
@@ -323,11 +323,11 @@ LPNode CSeedResolver::ResovleBuffer(char** pBuffer)
             pNode->Data.bcInt = GetBCInt(pBuffer);
             vecAllocated.push_back((INT_PTR)pNode);
 
-            if(pNode->Data.bcInt == _I64_MAX) throw NULL;//ÖÖ×ÓÎÄ¼şÓĞ´íÎó
+            if(pNode->Data.bcInt == _I64_MAX) throw NULL;//ç§å­æ–‡ä»¶æœ‰é”™è¯¯
             break;
         case BENCODE_PREFIX_LIST:
         {
-            //Ìø¹ı¿ªÍ·µÄBENCODE_PREFIX_LIST
+            //è·³è¿‡å¼€å¤´çš„BENCODE_PREFIX_LIST
             ++(*pBuffer);
             ++m_Position;
 
@@ -341,7 +341,7 @@ LPNode CSeedResolver::ResovleBuffer(char** pBuffer)
 
             while(**pBuffer != BENCODE_SUFFIX)
             {
-                pNode->Data.bcList = (LPBC_List)realloc((void*)pNode->Data.bcList, (i + 2)/*¶à·ÖÅäÒ»¸öÔªËØ´æ·ÅNULL*/ * sizeof(BC_List));
+                pNode->Data.bcList = (LPBC_List)realloc((void*)pNode->Data.bcList, (i + 2)/*å¤šåˆ†é…ä¸€ä¸ªå…ƒç´ å­˜æ”¾NULL*/ * sizeof(BC_List));
 
                 try
                 {
@@ -356,25 +356,25 @@ LPNode CSeedResolver::ResovleBuffer(char** pBuffer)
                 ++i;
             }
 
-            /* ÉÏÃæÄÇ¸öÑ­»·ÔÚÖÖ×ÓÎÄ¼şÓĞ´íÎó»òÕßÊÇ¸ö¿ÕÁĞ±íµÄÇé¿öÏÂÒ»´Î¶¼²»Ö´ĞĞ£¬Å×³öÒì³£ */
+            /* ä¸Šé¢é‚£ä¸ªå¾ªç¯åœ¨ç§å­æ–‡ä»¶æœ‰é”™è¯¯æˆ–è€…æ˜¯ä¸ªç©ºåˆ—è¡¨çš„æƒ…å†µä¸‹ä¸€æ¬¡éƒ½ä¸æ‰§è¡Œï¼ŒæŠ›å‡ºå¼‚å¸¸ */
             if(!i)
                 throw NULL;
             else
                 vecAllocated.push_back((INT_PTR)pNode->Data.bcList);
 
-            /* bcListÊÇ¸öÖ¸ÕëµÄ¶¯Ì¬Êı×é£¨BC_ListÊµ¼ÊÊÇLPNode£©£¬ÓÉÓÚÎŞ·¨È·¶¨¶¯Ì¬Êı×éµÄ³¤¶È£¬ÔÚÉÏÃæÎªbcList·ÖÅä¿Õ¼äµÄÊ±ºò£¬
-             * ¶à·ÖÅäÁËÒ»¸öÔªËØµÄ¿Õ¼ä£¬²¢ÇÒÎªÕâ¸öÔªËØ¸³ÖµNULL£¬Õâ¾ÍÈçÍ¬±ê×¼c×Ö·û´®Ò»Ñù£¬ÒÔNULL
-             * ½áÎ²£¬µ±±éÀúÕâ¸ö¶¯Ì¬Êı×éµÄÊ±ºò£¬¶Áµ½NULL¾ÍÈÏÎªÕâ¸öÊı×é½áÊøÁË*/
+            /* bcListæ˜¯ä¸ªæŒ‡é’ˆçš„åŠ¨æ€æ•°ç»„ï¼ˆBC_Listå®é™…æ˜¯LPNodeï¼‰ï¼Œç”±äºæ— æ³•ç¡®å®šåŠ¨æ€æ•°ç»„çš„é•¿åº¦ï¼Œåœ¨ä¸Šé¢ä¸ºbcListåˆ†é…ç©ºé—´çš„æ—¶å€™ï¼Œ
+             * å¤šåˆ†é…äº†ä¸€ä¸ªå…ƒç´ çš„ç©ºé—´ï¼Œå¹¶ä¸”ä¸ºè¿™ä¸ªå…ƒç´ èµ‹å€¼NULLï¼Œè¿™å°±å¦‚åŒæ ‡å‡†cå­—ç¬¦ä¸²ä¸€æ ·ï¼Œä»¥NULL
+             * ç»“å°¾ï¼Œå½“éå†è¿™ä¸ªåŠ¨æ€æ•°ç»„çš„æ—¶å€™ï¼Œè¯»åˆ°NULLå°±è®¤ä¸ºè¿™ä¸ªæ•°ç»„ç»“æŸäº†*/
             pNode->Data.bcList[i] = NULL;
 
-            //Ìø¹ı½áÎ²µÄBENCODE_SUFFIX
+            //è·³è¿‡ç»“å°¾çš„BENCODE_SUFFIX
             ++(*pBuffer);
             ++m_Position;
         }
         break;
         case BENCODE_PREFIX_DICT:
         {
-            //¶ÔÓÚbencode×ÖµäµÄ½âÎö¿É²Î¿¼ÉÏÃæµÄ¶ÔbencodeÁĞ±íµÄ½âÎö
+            //å¯¹äºbencodeå­—å…¸çš„è§£æå¯å‚è€ƒä¸Šé¢çš„å¯¹bencodeåˆ—è¡¨çš„è§£æ
             ++(*pBuffer);
             ++m_Position;
 
@@ -391,7 +391,7 @@ LPNode CSeedResolver::ResovleBuffer(char** pBuffer)
                 try
                 {
                     pNode->Data.bcDict[i].pszKey = GetBCString(pBuffer);
-                    if(!pNode->Data.bcDict[i].pszKey) throw NULL;//GetBCString²»»áÅ×³öÒì³££¬ËùÒÔ±ØĞë¼ì²é·µ»ØÖµ
+                    if(!pNode->Data.bcDict[i].pszKey) throw NULL;//GetBCStringä¸ä¼šæŠ›å‡ºå¼‚å¸¸ï¼Œæ‰€ä»¥å¿…é¡»æ£€æŸ¥è¿”å›å€¼
                     pNode->Data.bcDict[i].pNode = ResovleBuffer(pBuffer);
                 }
                 catch(INT)
@@ -408,8 +408,8 @@ LPNode CSeedResolver::ResovleBuffer(char** pBuffer)
             else
                 vecAllocated.push_back((INT_PTR)pNode->Data.bcList);
 
-            /* ×ÖµäºÍÉÏÃæ´¦ÀíÁĞ±íÓĞµã²»Ò»Ñù£¬bcDictµÄÊı×éÔªËØ²»ÊÇÖ¸Õë£¬ËùÒÔ¾Í°Ñ½áÎ²ÔªËØµÄpszKey¸¶NULL£¬
-             * ÕâÑùµ±±éÀúbcDictÊı×éÊ±£¬¶Áµ½Ä³¸öÔªËØµÄKeyÊÇNULLÊ±ÈÏÎª½áÊø */
+            /* å­—å…¸å’Œä¸Šé¢å¤„ç†åˆ—è¡¨æœ‰ç‚¹ä¸ä¸€æ ·ï¼ŒbcDictçš„æ•°ç»„å…ƒç´ ä¸æ˜¯æŒ‡é’ˆï¼Œæ‰€ä»¥å°±æŠŠç»“å°¾å…ƒç´ çš„pszKeyä»˜NULLï¼Œ
+             * è¿™æ ·å½“éå†bcDictæ•°ç»„æ—¶ï¼Œè¯»åˆ°æŸä¸ªå…ƒç´ çš„Keyæ˜¯NULLæ—¶è®¤ä¸ºç»“æŸ */
             pNode->Data.bcDict[i].pszKey = NULL;
 
             ++(*pBuffer);
@@ -417,7 +417,7 @@ LPNode CSeedResolver::ResovleBuffer(char** pBuffer)
         }
         break;
         default:
-            //Óöµ½ÁËÎŞĞ§µÄbencodeÇ°×º£¬Ö±½ÓÅ×³öÒì³£
+            //é‡åˆ°äº†æ— æ•ˆçš„bencodeå‰ç¼€ï¼Œç›´æ¥æŠ›å‡ºå¼‚å¸¸
             throw NULL;
             break;
     }
@@ -445,7 +445,7 @@ char* CSeedResolver::GetBCString(char** pBuffer)
     char* pszStrLen;
     UINT nLen = 0;
 
-    //bencode×Ö·û´®±ØĞëÒÔ0-9µÄÊı×Ö¿ªÊ¼
+    //bencodeå­—ç¬¦ä¸²å¿…é¡»ä»¥0-9çš„æ•°å­—å¼€å§‹
     if(**pBuffer < '0' || **pBuffer >'9')
         return pszRet;
 
@@ -453,27 +453,27 @@ char* CSeedResolver::GetBCString(char** pBuffer)
     {
         ++nLen;
 
-        //¼ì²éÊÇ·ñÔ½½ç
+        //æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
         if(!IsRangeValid(nLen))	return pszRet;
     }
 
-    //nLenÎªbcstringÇ°µ¼µÄ±íÊ¾bcstring³¤¶ÈµÄ×Ö·û¸öÊı
+    //nLenä¸ºbcstringå‰å¯¼çš„è¡¨ç¤ºbcstringé•¿åº¦çš„å­—ç¬¦ä¸ªæ•°
     pszStrLen = new char[nLen + 1];
     ZeroMemory(pszStrLen, nLen + 1);
     memcpy((void*)pszStrLen, (void*)*pBuffer, nLen);
 
-    //¼ì²éÊÇ·ñÔ½½ç
+    //æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
     if(!IsRangeValid(nLen + 1)) return pszRet;
 
-    //ÒÆ¶¯Ö¸Õë
-    *pBuffer += nLen + 1/* 1Îª':' */;
+    //ç§»åŠ¨æŒ‡é’ˆ
+    *pBuffer += nLen + 1/* 1ä¸º':' */;
     m_Position += nLen + 1;
 
-    //nLenÕâÊ±ÎªbcstringµÄ³¤¶È
+    //nLenè¿™æ—¶ä¸ºbcstringçš„é•¿åº¦
     nLen = atoi(pszStrLen);
     SAFE_CLEAN(pszStrLen);
 
-    if(!nLen)//nLen=0ÊÇ¸ö¿Õ×Ö·û´®
+    if(!nLen)//nLen=0æ˜¯ä¸ªç©ºå­—ç¬¦ä¸²
     {
         pszRet = (char*)malloc(sizeof(char));
         pszRet[0] = '\0';
@@ -481,7 +481,7 @@ char* CSeedResolver::GetBCString(char** pBuffer)
     }
     else
     {
-        //¼ì²éÊÇ·ñÔ½½ç
+        //æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
         if(!IsRangeValid(nLen)) return pszRet;
 
         pszRet = (char*)malloc((nLen + 1) * sizeof(char));
@@ -490,7 +490,7 @@ char* CSeedResolver::GetBCString(char** pBuffer)
         memcpy((void*)pszRet, (void*)*pBuffer, nLen);
     }
 
-    //ÒÆ¶¯Ö¸Õë
+    //ç§»åŠ¨æŒ‡é’ˆ
     *pBuffer += nLen;
     m_Position += nLen;
 
@@ -503,11 +503,11 @@ DWORDLONG CSeedResolver::GetBCInt(char** pBuffer)
     char* psz;
     UINT nLen = 0;
 
-    //bencodeÕûÊı±ØĞëÒÔi¿ªÊ¼
+    //bencodeæ•´æ•°å¿…é¡»ä»¥iå¼€å§‹
     if(**pBuffer != BENCODE_PREFIX_INT)
         return dwlRet;
 
-    //¼ì²éÊÇ·ñÔ½½ç
+    //æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
     if(!IsRangeValid(1)) return dwlRet;
 
     ++(*pBuffer);
@@ -517,24 +517,24 @@ DWORDLONG CSeedResolver::GetBCInt(char** pBuffer)
     {
         ++nLen;
 
-        //¼ì²éÊÇ·ñÔ½½ç
+        //æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
         if(!IsRangeValid(nLen)) return dwlRet;
     }
 
     psz = new char[nLen + 1];
     ZeroMemory(psz, nLen + 1);
     memcpy((void*)psz, (void*)*pBuffer, nLen);
-    if(*psz == '0' && nLen == 1)//0ÊÇbencodeÓĞĞ§µÄÊı×Ö
+    if(*psz == '0' && nLen == 1)//0æ˜¯bencodeæœ‰æ•ˆçš„æ•°å­—
         dwlRet = 0;
     else
         dwlRet = _atoi64(psz) ? _atoi64(psz) : _I64_MAX;
     SAFE_CLEAN(psz);
 
-    //¼ì²éÊÇ·ñÔ½½ç
+    //æ£€æŸ¥æ˜¯å¦è¶Šç•Œ
     if(!IsRangeValid(nLen + 1)) return _I64_MAX;
 
-    //ÒÆ¶¯Ö¸Õë
-    *pBuffer += nLen + 1/* 1Îª'e' */;
+    //ç§»åŠ¨æŒ‡é’ˆ
+    *pBuffer += nLen + 1/* 1ä¸º'e' */;
     m_Position += nLen + 1;
 
     return dwlRet;
@@ -544,7 +544,7 @@ BOOL CSeedResolver::GetNode(LPBC_Dict pDict, const char* pszKey, _Out_ LPNode* p
 {
     if(!pDict) return FALSE;
 
-    while(pDict->pszKey)//ÓÃpszKeyÅĞ¶Ï¶¯Ì¬Êı×éÊÇ·ñ½áÊø
+    while(pDict->pszKey)//ç”¨pszKeyåˆ¤æ–­åŠ¨æ€æ•°ç»„æ˜¯å¦ç»“æŸ
     {
         if(strcmp(pDict->pszKey, pszKey) == 0)
         {
@@ -566,8 +566,8 @@ void CSeedResolver::ConvertToUnicode(const char* pStr, CString& s, int nCodePage
 
     if(!pStr) return;
 
-    /* ÕâÖÖ·½·¨²¢²»ºÃ£¬Ó¦¸Ã×Ô¶¯¼ì²â±àÂë£¬ÎÒ¶Ô×Ö·ûµÄ±àÂë½âÂë²»Êì£¬Ö»ÄÜÕâÑù£¬ÔİÊ±Ã»ÓĞ·¢ÏÖÓĞÂÒÂëµÄ*/
-    if(!nCodePage)//Ã»ÓĞÖ¸¶¨´úÂëÒ³£¬Ê¹ÓÃÖÖ×ÓÄÚ¶¨ÒåµÄ´úÂëÒ³
+    /* è¿™ç§æ–¹æ³•å¹¶ä¸å¥½ï¼Œåº”è¯¥è‡ªåŠ¨æ£€æµ‹ç¼–ç ï¼Œæˆ‘å¯¹å­—ç¬¦çš„ç¼–ç è§£ç ä¸ç†Ÿï¼Œåªèƒ½è¿™æ ·ï¼Œæš‚æ—¶æ²¡æœ‰å‘ç°æœ‰ä¹±ç çš„*/
+    if(!nCodePage)//æ²¡æœ‰æŒ‡å®šä»£ç é¡µï¼Œä½¿ç”¨ç§å­å†…å®šä¹‰çš„ä»£ç é¡µ
         nCP = SeedInfo.Seed_Encoding;
     else
         nCP = nCodePage;
